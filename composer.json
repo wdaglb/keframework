@@ -1,5 +1,6 @@
 {
-    "name": "wdaglb/keframework",
+    "name": "ke/framework",
+    "type": "library",
     "authors": [
         {
             "name": "King east",
@@ -8,12 +9,18 @@
     ],
     "require": {
         "php":">=5.4",
+    },
+    "require-dev": {
         "twig/twig":"1.*"
     },
   "autoload": {
     "psr-4": {
-      "app\\": "../app/",
-      "ke\\": ["src/framework/core","src/framework/addons"]
+      "ke\\": ["src/core","src/addons"]
     }
-  }
+  },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.00-dev"
+        }
+    }
 }
