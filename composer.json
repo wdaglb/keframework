@@ -1,0 +1,19 @@
+{
+    "name": "wdaglb/keframework",
+    "authors": [
+        {
+            "name": "King east",
+            "email": "1207877378@qq.com"
+        }
+    ],
+    "require": {
+        "php":">=5.4",
+        "twig/twig":"1.*"
+    },
+  "autoload": {
+    "psr-4": {
+      "app\\": "../app/",
+      "ke\\": ["src/framework/core","src/framework/addons"]
+    }
+  }
+}
