@@ -16,7 +16,6 @@
     },
   "autoload": {
     "psr-4": {
-      "app\\": "../app/",
       "ke\\": ["src/core","src/addons"]
     }
   }

@@ -1,4 +1,4 @@
-<?php if(!defined('ROOT')) exit('Access Denied!');?>
+<?php if(!defined('FRAMEWORK_ROOT')) exit('Access Denied!');?>
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>

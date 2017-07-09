@@ -5,13 +5,24 @@
  * Site: http://cms.iydou.cn/
  */
 namespace ke;
+define('FRAMEWORK_ROOT',__DIR__.'/../');
+define('VERSION','1.0.00');
+// HOOK类型
+define('HOOK_ROUTE_START',1);
+define('HOOK_ROUTE_END',2);
+define('HOOK_VIEW_START',3);
+define('HOOK_VIEW_END',4);
 class KE
 {
-    public static function boot()
+    private static $option=[];
+    public static function boot($option=[])
     {
-        new Exception();
-        require ROOT.'framework/functions.php';
-        $config=require ROOT.'config/config.php';
+        if(!isset($option['root'])) return View::throwError(['message'=>'请定义主路径[root]']);
+        self::$option=$option;
+        self::autoload();
+        require FRAMEWORK_ROOT.'functions.php';
+
+        $config=require $option['root'].'config/config.php';
         Config::set($config);
         $c=$config['csrf'];
         if(isset($c['status']) && $c['status'] && $c['name']){
@@ -30,10 +41,25 @@ class KE
             }
 
         }
-        require ROOT.'app/route.php';
+        require $option['root'].'app/route.php';
 
         Route::boot();
-        Hook::boot(HOOK_ROUTE_END);
+    }
+
+
+    public static function autoload()
+    {
+        spl_autoload_register(function ($class){
+            if(substr($class,0,4)=='app\\'){
+                $path=self::$option['root'].str_replace('\\','/',$class).'.php';
+                if(is_file($path)){
+                    require $path;
+                }else{
+                    return false;
+                }
+            }
+            return false;
+        });
     }
 
 }

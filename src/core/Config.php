@@ -11,7 +11,7 @@ class Config
     private static $config=[];
     public static function load($name)
     {
-        $file=ROOT.'config/'.$name.'.php';
+        $file=FRAMEWORK_ROOT.'config/'.$name.'.php';
         if(is_file($file)){
             $array=require($file);
             self::$config[$name]=$array;

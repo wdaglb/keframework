@@ -17,7 +17,7 @@ class View
             echo json_encode(['status'=>false,'message'=>$message]);
             exit;
         }
-        require ROOT.'framework/tpl/msg.php';
+        require FRAMEWORK_ROOT.'tpl/msg.php';
         die();
     }
     public static function throwError(array $error)
@@ -35,7 +35,7 @@ class View
             echo json_encode(['status'=>false,'message'=>$error['message']]);
             exit;
         }
-        require ROOT.'framework/tpl/error.php';
+        require FRAMEWORK_ROOT.'tpl/error.php';
         die();
 
     }
