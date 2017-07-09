@@ -15,6 +15,11 @@ define('HOOK_VIEW_END',4);
 class KE
 {
     private static $option=[];
+
+    /**
+     * 启动框架
+     * @param array $option
+     */
     public static function boot($option=[])
     {
         if(!isset($option['root'])) return View::throwError(['message'=>'请定义主路径[root]']);

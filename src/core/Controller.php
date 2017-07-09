@@ -7,10 +7,19 @@ namespace ke;
 class Controller
 {
     private $view;
-    public function __init()
+    public function __init($option=[])
     {
         if(is_object($this->view)) return;
-        $this->view=new Template();
+        $this->view=new Template($option);
+    }
+
+    /**
+     * 设置模板模块
+     * @param $name
+     */
+    protected function setTemplateModule($name)
+    {
+        $this->__init(['module'=>$name]);
     }
 
     /**

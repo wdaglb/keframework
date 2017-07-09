@@ -65,7 +65,7 @@ class Register
         }
         header('HTTP/1.1 404 Not Found');
         $host=$this->get_server().$url;
-        require FRAMEWORK_ROOT.'framework/tpl/404.php';
+        require FRAMEWORK_ROOT.'tpl/404.php';
     }
     private function is_rule($url,$route)
     {

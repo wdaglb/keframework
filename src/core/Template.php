@@ -21,11 +21,11 @@ class Template
     private $var=[];
 
     private $live;
-    public function __construct()
+    public function __construct($option=[])
     {
         $this->var['csrf_token']=session('csrf_token');
         try{
-            $loader = new \Twig_Loader_Filesystem($this->config['template_path']);
+            $loader = new \Twig_Loader_Filesystem($this->config['template_path'].(isset($option['module']) ? $option['module'].'/' :''));
             $this->live = new \Twig_Environment($loader, array(
                 'cache' => $this->config['compile_path'],
                 'debug'=>DEBUG
