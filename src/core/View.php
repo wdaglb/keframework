@@ -17,15 +17,15 @@ class View
             echo json_encode(['status'=>false,'message'=>$message]);
             exit;
         }
-        require FRAMEWORK_ROOT.'tpl/msg.php';
+        require Request::get('system.framework').'tpl/msg.php';
         die();
     }
     public static function throwError(array $error)
     {
-        if(!defined('DEBUG') || !DEBUG){
-            $debug=false;
-        }else{
+        if(Request::get('debug')==true){
             $debug=true;
+        }else{
+            $debug=false;
         }
         if(Request::is_ajax()){
             header('Content-type:application/json');
@@ -35,7 +35,7 @@ class View
             echo json_encode(['status'=>false,'message'=>$error['message']]);
             exit;
         }
-        require FRAMEWORK_ROOT.'tpl/error.php';
+        require Request::get('system.framework').'tpl/error.php';
         die();
 
     }

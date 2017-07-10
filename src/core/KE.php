@@ -5,29 +5,25 @@
  * Site: http://cms.iydou.cn/
  */
 namespace ke;
-define('FRAMEWORK_ROOT',__DIR__.'/../');
-define('VERSION','1.0.00');
-// HOOK类型
-define('HOOK_ROUTE_START',1);
-define('HOOK_ROUTE_END',2);
-define('HOOK_VIEW_START',3);
-define('HOOK_VIEW_END',4);
 class KE
 {
-    private static $option=[];
-
     /**
      * 启动框架
      * @param array $option
      */
     public static function boot($option=[])
     {
-        if(!isset($option['root'])) return View::throwError(['message'=>'请定义主路径[root]']);
-        self::$option=$option;
+        Request::set('debug',isset($option['debug']) ? $option['debug'] : false);
+        if(!isset($option['root'])) View::throwError(['message'=>'请定义主路径[root]']);
+        Request::set('system',[
+            'root'=>$option['root'],
+            'framework'=>__DIR__.'/../'
+        ]);
         self::autoload();
-        require FRAMEWORK_ROOT.'functions.php';
+        require Request::get('system.framework').'helper.php';
+        require Request::get('system.framework').'functions.php';
 
-        $config=require $option['root'].'config/config.php';
+        $config=require Request::get('system.root').'config/config.php';
         Config::set($config);
         $c=$config['csrf'];
         if(isset($c['status']) && $c['status'] && $c['name']){
@@ -46,7 +42,7 @@ class KE
             }
 
         }
-        require $option['root'].'app/route.php';
+        require Request::get('system.root').'app/route.php';
 
         Route::boot();
     }
@@ -56,7 +52,7 @@ class KE
     {
         spl_autoload_register(function ($class){
             if(substr($class,0,4)=='app\\'){
-                $path=self::$option['root'].str_replace('\\','/',$class).'.php';
+                $path=Request::get('system.root').str_replace('\\','/',$class).'.php';
                 if(is_file($path)){
                     require $path;
                 }else{

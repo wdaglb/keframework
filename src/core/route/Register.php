@@ -36,6 +36,7 @@ class Register
         $prefix=isset($this->group['prefix']) ? $this->group['prefix'].'/' : '';
         $namespace=isset($this->group['namespace']) ? $this->group['namespace'].'/' : '';
         Lists::set([
+            'namespace'=>$namespace,
             'pattern'=>$prefix.$name,
             'bind'=>$namespace.$bind,
             'method'=>$type,
@@ -65,7 +66,7 @@ class Register
         }
         header('HTTP/1.1 404 Not Found');
         $host=$this->get_server().$url;
-        require FRAMEWORK_ROOT.'tpl/404.php';
+        require Request::get('system.framework').'tpl/404.php';
     }
     private function is_rule($url,$route)
     {
@@ -128,6 +129,9 @@ class Register
         $class=new $namespace();
         if(!method_exists($class,$action)){
             View::error('控制器不存在:'.$namespace.'@'.$action);
+        }
+        if($route['namespace']!=null){
+            \view()->setConfig(['module'=>$route['namespace']]);
         }
         $return=$class->$action();
         Request::set('controller',$namespaces);

@@ -23,7 +23,12 @@ class Request
      */
     public static function get($key)
     {
-        return self::$var[$key];
+        if(strpos($key,'.')===false){
+            return isset(self::$var[$key]) ? self::$var[$key] : null;
+        }else{
+            list($l,$r)=explode('.',$key);
+            return isset(self::$var[$l][$r]) ? self::$var[$l][$r] : null;
+        }
     }
 
     /**

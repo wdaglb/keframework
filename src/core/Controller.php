@@ -4,14 +4,10 @@
 namespace ke;
 
 
+use function Sodium\version_string;
+
 class Controller
 {
-    private $view;
-    public function __init($option=[])
-    {
-        if(is_object($this->view)) return;
-        $this->view=new Template($option);
-    }
 
     /**
      * 设置模板模块
@@ -19,7 +15,7 @@ class Controller
      */
     protected function setTemplateModule($name)
     {
-        $this->__init(['module'=>$name]);
+        view()->setConfig(['module'=>$name]);
     }
 
     /**
@@ -29,8 +25,7 @@ class Controller
      */
     protected function render($name)
     {
-        $this->__init();
-        return $this->view->render($name);
+        return view()->render($name);
     }
 
     /**
@@ -40,8 +35,7 @@ class Controller
      */
     protected function assign($name,$value=[])
     {
-        $this->__init();
-        return $this->view->assign($name,$value);
+        return view()->assign($name,$value);
     }
 
     /**
@@ -51,8 +45,7 @@ class Controller
      */
     protected function success($message,$url=null)
     {
-        $this->__init();
-        return $this->view->success($message,$url);
+        return view()->success($message,$url);
     }
 
     /**
@@ -62,8 +55,7 @@ class Controller
      */
     protected function error($message,$url=null)
     {
-        $this->__init();
-        return $this->view->error($message,$url);
+        return view()->error($message,$url);
     }
 
 }

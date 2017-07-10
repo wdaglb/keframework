@@ -21,14 +21,29 @@ class Template
     private $var=[];
 
     private $live;
-    public function __construct($option=[])
+
+    /**
+     * 设置模板参数
+     * @param array $config
+     */
+    public function setConfig($config=[])
     {
+        $this->config=array_merge($this->config,$config);
+    }
+
+    /**
+     * 初始化模板
+     */
+    private function _init()
+    {
+        if(is_object($this->live)) return;
         $this->var['csrf_token']=session('csrf_token');
         try{
-            $loader = new \Twig_Loader_Filesystem($this->config['template_path'].(isset($option['module']) ? $option['module'].'/' :''));
+            $tp=$this->config['template_path'].(isset($this->config['module']) ? $this->config['module'] :'');
+            $loader = new \Twig_Loader_Filesystem(Request::get('system.root').$tp);
             $this->live = new \Twig_Environment($loader, array(
                 'cache' => $this->config['compile_path'],
-                'debug'=>DEBUG
+                'debug'=>Request::get('debug')
             ));
             $class=new Functions();
             $l=get_class_methods($class);
@@ -64,6 +79,7 @@ class Template
                 header('Content-type: application/json');
                 return json_encode(['status'=>true,'message'=>$message]);
             }
+            $this->_init();
             return $this->live->render('success'.$this->config['suffix'],['message'=>$message,'url'=>$url]);
         }catch (\Twig_Error $e){
             $error=[
@@ -87,6 +103,7 @@ class Template
                 header('Content-type: application/json');
                 return json_encode(['status'=>false,'message'=>$message]);
             }
+            $this->_init();
             return $this->live->render('error'.$this->config['suffix'],['message'=>$message,'url'=>$url]);
         }catch (\Twig_Error $e){
             $error=[
@@ -107,6 +124,7 @@ class Template
     public function render($name)
     {
         try{
+            $this->_init();
             return $this->live->render($name.$this->config['suffix'],$this->var);
         }catch (\Twig_Error $e){
             $error=[
