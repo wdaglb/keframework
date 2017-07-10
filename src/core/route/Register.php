@@ -64,6 +64,10 @@ class Register
                 exit;
             }
         }
+        if(Request::is_ajax()){
+            header('Content-type: application/json');
+            exit(json_encode(['status'=>false,'message'=>$message]));
+        }
         header('HTTP/1.1 404 Not Found');
         $host=$this->get_server().$url;
         require Request::get('system.framework').'tpl/404.php';

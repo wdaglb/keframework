@@ -27,11 +27,13 @@ class KE
         Config::set($config);
         $c=$config['csrf'];
         if(isset($c['status']) && $c['status'] && $c['name']){
-            $token=session($c['name']);
-            if($token==''){
+            $token=session('__csrf_token__');
+            if($token==null){
                 $token=sha1(mt_rand(1111,9999));
-                session($c['name'],$token);
+                session('__csrf_token__',$token);
             }
+            view()->assign('csrf_name',$c['name']);
+            view()->assign('csrf_token',$token);
             if(Request::is_post()){
                 if(empty($_POST[$c['name']])){
                     View::error('非法操作');

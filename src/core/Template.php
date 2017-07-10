@@ -37,7 +37,6 @@ class Template
     private function _init()
     {
         if(is_object($this->live)) return;
-        $this->var['csrf_token']=session('csrf_token');
         try{
             $tp=$this->config['template_path'].(isset($this->config['module']) ? $this->config['module'] :'');
             $loader = new \Twig_Loader_Filesystem(Request::get('system.root').$tp);
@@ -74,11 +73,10 @@ class Template
      * @return string
      */
     public function success($message,$url=null){
+        if(Request::is_ajax()){
+            return ['status'=>true,'message'=>$message];
+        }
         try{
-            if(Request::is_ajax()){
-                header('Content-type: application/json');
-                return json_encode(['status'=>true,'message'=>$message]);
-            }
             $this->_init();
             return $this->live->render('success'.$this->config['suffix'],['message'=>$message,'url'=>$url]);
         }catch (\Twig_Error $e){
@@ -98,11 +96,10 @@ class Template
      * @return string
      */
     public function error($message,$url=null){
+        if(Request::is_ajax()){
+            return ['status'=>false,'message'=>$message];
+        }
         try{
-            if(Request::is_ajax()){
-                header('Content-type: application/json');
-                return json_encode(['status'=>false,'message'=>$message]);
-            }
             $this->_init();
             return $this->live->render('error'.$this->config['suffix'],['message'=>$message,'url'=>$url]);
         }catch (\Twig_Error $e){
