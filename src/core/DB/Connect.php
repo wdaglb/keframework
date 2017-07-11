@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Name: Connect.php
+ * User: King east
+ * Site: http://cms.iydou.cn/
+ */
 
 namespace ke\DB;
 
