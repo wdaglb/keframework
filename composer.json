@@ -1,19 +1,21 @@
 {
-    "name": "ke/framework",
-    "type": "library",
-    "authors": [
-        {
-            "name": "King east",
-            "email": "1207877378@qq.com"
-        }
-    ],
-    "require": {
-        "php":">=5.4",
-        "twig/twig":"1.*"
-    },
-    "require-dev": {
-        "twig/twig":"1.*"
-    },
+  "name": "ke/framework",
+  "type": "library",
+  "authors": [
+    {
+      "name": "King east",
+      "email": "1207877378@qq.com"
+    }
+  ],
+  "require": {
+    "php":">=5.4",
+    "twig/twig":"1.*",
+    "filp/whoops": "2.*"
+  },
+  "require-dev": {
+    "twig/twig":"1.*",
+    "filp/whoops": "2.*"
+  },
   "autoload": {
     "psr-4": {
       "ke\\": ["src/core","src/addons"]
