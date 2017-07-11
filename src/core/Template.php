@@ -38,7 +38,7 @@ class Template
     {
         if(is_object($this->live)) return;
         try{
-            $tp=$this->config['template_path'].(isset($this->config['module']) ? $this->config['module'] :'');
+            $tp=$this->config['template_path'].(isset($this->config['module']) ? $this->config['module'].'/' :'');
             $loader = new \Twig_Loader_Filesystem(Request::get('system.root').$tp);
             $this->live = new \Twig_Environment($loader, array(
                 'cache' => $this->config['compile_path'],

@@ -29,9 +29,9 @@ class Register
      * 添加路由规则
      * @param $name
      * @param $bind
-     * @param string $type
+     * @param string $url
      */
-    public function add($name,$bind,$type='get')
+    public function add($name,$bind,$url='')
     {
         $prefix=isset($this->group['prefix']) ? $this->group['prefix'].'/' : '';
         $namespace=isset($this->group['namespace']) ? $this->group['namespace'].'/' : '';
@@ -39,7 +39,7 @@ class Register
             'namespace'=>$namespace,
             'pattern'=>$prefix.$name,
             'bind'=>$namespace.$bind,
-            'method'=>$type,
+            'url'=>$url,
             'domain'=>isset($this->group['domain']) ? $this->group['domain'] : '',
         ]);
     }
@@ -48,7 +48,7 @@ class Register
      * 匹配路由
      * @param $url
      */
-    public function match($url)
+    public function match($url='')
     {
         $host=get_domain();
         $route=Lists::get();
@@ -125,7 +125,25 @@ class Register
      */
     private function run($route)
     {
-        list($namespaces,$action)=explode('@',$route['bind']);
+        $exp=explode('/',$route['bind']);
+        $n=count($exp);
+        if($n==1){
+            list($module,$controller,$action)=[$route['bind'],'index','index'];
+        }elseif($n==2){
+            $controller=end($exp);
+            array_pop($exp);
+            $module=end($exp);
+            array_pop($exp);
+            $action='index';
+        }else{
+            $action=end($exp);
+            array_pop($exp);
+            $controller=end($exp);
+            array_pop($exp);
+            $module=implode('/',$exp);
+
+        }
+        $namespaces=sprintf('%s\\%s',str_replace('/','\\',$module),ucwords($controller));
         $namespace='app\\controllers\\'.str_replace('/','\\',$namespaces);
         if(!class_exists($namespace)){
             View::error('控制器不存在:'.$namespace);
@@ -134,11 +152,12 @@ class Register
         if(!method_exists($class,$action)){
             View::error('控制器不存在:'.$namespace.'@'.$action);
         }
-        if($route['namespace']!=null){
-            \view()->setConfig(['module'=>$route['namespace']]);
+        if(Config::get('is_tpl_module')==true){
+            \view()->setConfig(['module'=>$module]);
         }
         $return=$class->$action();
-        Request::set('controller',$namespaces);
+        Request::set('module',$module);
+        Request::set('controller',$controller);
         Request::set('action',$action);
         if(is_array($return)){
             header('Content-type:application/json');
@@ -159,11 +178,7 @@ class Register
     {
         $list=Lists::get();
         if($this->get_index($uri,$list)===false){
-            $uri=$this->get_server();
-            if(!empty($param)){
-                $uri.='?'.http_build_query($param);
-            }
-            $url=urldecode($uri);
+            $url='/';
         }else{
             $url=$this->return_rule($list,$param);
         }

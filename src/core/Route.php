@@ -19,7 +19,9 @@ class Route
      */
     public static function boot()
     {
-
+        if(!is_object(self::$ds)){
+            self::$ds=new Register();
+        }
         self::$ds->match(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/');
     }
 
