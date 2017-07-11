@@ -9,20 +9,21 @@ function get_domain(){
     return $host;
 }
 function get_ip($int=false){
-    $ip=cookie(md5('uip'));
-    if($ip!=''){return ($int?ip2long($ip):$ip);}
-    $onlineip = '';
-    if(getenv('HTTP_CLIENT_IP') && strcasecmp(getenv('HTTP_CLIENT_IP'), 'unknown')) {
-        $onlineip = getenv('HTTP_CLIENT_IP');
-    } elseif(getenv('HTTP_X_FORWARDED_FOR') && strcasecmp(getenv('HTTP_X_FORWARDED_FOR'), 'unknown')) {
-        $onlineip = getenv('HTTP_X_FORWARDED_FOR');
-    } elseif(getenv('REMOTE_ADDR') && strcasecmp(getenv('REMOTE_ADDR'), 'unknown')) {
-        $onlineip = getenv('REMOTE_ADDR');
-    } elseif(isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], 'unknown')) {
-        $onlineip = $_SERVER['REMOTE_ADDR'];
-    }
-    cookie(md5('uip'),$onlineip,86400);
-    $ip=$int?ip2long($onlineip):$onlineip;
+    if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+        $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+    else if (isset($_SERVER["HTTP_CLIENT_IP"]))
+        $ip = $_SERVER["HTTP_CLIENT_IP"];
+    else if (isset($_SERVER["REMOTE_ADDR"]))
+        $ip = $_SERVER["REMOTE_ADDR"];
+    else if (getenv("HTTP_X_FORWARDED_FOR"))
+        $ip = getenv("HTTP_X_FORWARDED_FOR");
+    else if (getenv("HTTP_CLIENT_IP"))
+        $ip = getenv("HTTP_CLIENT_IP");
+    else if (getenv("REMOTE_ADDR"))
+        $ip = getenv("REMOTE_ADDR");
+    else
+        $ip = "0";
+    $ip=$int ? ip2long($ip) : $ip;
     return $ip;
 }
 function cookie($name,$value='',$time=3600,$domain=''){
