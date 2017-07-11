@@ -152,6 +152,9 @@ class Register
         if(!method_exists($class,$action)){
             View::error('控制器不存在:'.$namespace.'@'.$action);
         }
+        Request::set('module',$module);
+        Request::set('controller',$controller);
+        Request::set('action',$action);
         if(Config::get('is_tpl_module')==true){
             \view()->setConfig(['module'=>$module]);
         }
@@ -161,9 +164,6 @@ class Register
 
 
         $return=$class->$action();
-        Request::set('module',$module);
-        Request::set('controller',$controller);
-        Request::set('action',$action);
         if(is_array($return)){
             header('Content-type:application/json');
             echo json_encode($return);
@@ -203,7 +203,8 @@ class Register
                 if(isset($item['domain']) && $item['domain']!=''){
                     //
                     if($item['domain']==get_domain()){
-                        return false;
+                        $array=$item;
+                        return true;
                     }
                 }
                 $array=$item;

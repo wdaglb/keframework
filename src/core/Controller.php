@@ -14,6 +14,23 @@ class Controller
      */
     protected $fronts=[];
 
+    public function __isset($name)
+    {
+        if($name=='fronts') return true;
+        return false;
+    }
+
+    public function __call($name, $arguments)
+    {
+        if(in_array($name,$this->fronts)) return call_user_func_array([$this,$name],$arguments);
+    }
+
+    public function __get($name)
+    {
+        // TODO: Implement __get() method.
+        if($name=='fronts') return $this->fronts;
+    }
+
     /**
      * 设置模板模块
      * @param $name
@@ -51,6 +68,32 @@ class Controller
     protected function success($message,$url=null)
     {
         return view()->success($message,$url);
+    }
+
+    /**
+     * 跳转
+     * @param $url
+     * @param array $param
+     */
+    protected function redirect($url,$param=[])
+    {
+        if(Request::is_ajax()){
+            header('Content-type:application/json');
+            if(!empty($param) && is_array($param)){
+                $value=array_merge(['status'=>false,'message'=>'跳转提示','url'=>$url],$param);
+            }else{
+                $value=['status'=>false,'message'=>'跳转提示','url'=>$url];
+            }
+            echo json_encode($value);
+            exit;
+        }
+        if(substr($url,0,3)==='ef:'){
+            $url=substr($url,3);
+            echo '<script type="text/javascript">top.location.href="'.Route::url($url,$param).'";</script>';
+        }else{
+            header('Location:'.Route::url($url,$param));
+        }
+        exit;
     }
 
     /**
