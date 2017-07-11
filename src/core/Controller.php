@@ -8,6 +8,11 @@ use function Sodium\version_string;
 
 class Controller
 {
+    /**
+     * 前置器
+     * @var array
+     */
+    protected $fronts=[];
 
     /**
      * 设置模板模块

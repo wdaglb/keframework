@@ -155,6 +155,11 @@ class Register
         if(Config::get('is_tpl_module')==true){
             \view()->setConfig(['module'=>$module]);
         }
+        if(isset($class->fronts)){
+            foreach ($class->fronts as $method) $class->$method();
+        }
+
+
         $return=$class->$action();
         Request::set('module',$module);
         Request::set('controller',$controller);

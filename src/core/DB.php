@@ -18,6 +18,7 @@ class DB
     private static function __init()
     {
         $c=Config::get('config.database');
+        if(empty($c)) View::throwError(['message'=>'数据库没有配置']);
         self::$config=array_merge(self::$config,$c);
         self::$db=Connect::boot(self::$config);
     }
