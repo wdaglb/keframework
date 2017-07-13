@@ -22,7 +22,7 @@ class Route
         if(!is_object(self::$ds)){
             self::$ds=new Register();
         }
-        self::$ds->match(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/');
+        self::$ds->match(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
     }
 
     /**
@@ -38,15 +38,16 @@ class Route
 
     /**
      * @param $name
-     * @param $bind
+     * @param $classname
+     * @param $action
      * @param string $type
      */
-    public static function register($name,$bind,$type='get')
+    public static function register($name,$classname,$action='index',$type='get')
     {
         if(!is_object(self::$ds)){
             self::$ds=new Register();
         }
-        self::$ds->add($name,$bind,$type);
+        return self::$ds->add($name,$classname,$action,$type);
     }
 
     public static function url($uri,$param=[])

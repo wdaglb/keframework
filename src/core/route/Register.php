@@ -16,6 +16,8 @@ class Register
 {
     private $group=[];
 
+    private $index=-1;
+
     /**
      * Register constructor.
      * @param array $option
@@ -25,23 +27,36 @@ class Register
         $this->group=$option;
     }
 
-    /**
-     * 添加路由规则
-     * @param $name
-     * @param $bind
-     * @param string $url
-     */
-    public function add($name,$bind,$url='')
+    public function add($name,$controller,$action='',$type='get')
     {
         $prefix=isset($this->group['prefix']) ? $this->group['prefix'].'/' : '';
-        $namespace=isset($this->group['namespace']) ? $this->group['namespace'].'/' : '';
-        Lists::set([
-            'namespace'=>$namespace,
+        $module=isset($this->group['module']) ? $this->group['module'].'/' : '';
+        $this->index=Lists::set([
             'pattern'=>$prefix.$name,
-            'bind'=>$namespace.$bind,
-            'url'=>$url,
+            'module'=>$module,
+            'controller'=>$controller,
+            'action'=>$action,
+            'type'=>$type,
             'domain'=>isset($this->group['domain']) ? $this->group['domain'] : '',
         ]);
+        return $this;
+    }
+
+    public function __call($name, $arguments)
+    {
+        if(in_array($name,['as'])){
+            $method='_'.$name;
+            return call_user_func_array([$this,$method],$arguments);
+        }
+    }
+
+    /**
+     * 绑定生成URL名
+     * @param $url
+     */
+    public function _as($url)
+    {
+        Lists::push($this->index,['as'=>$url]);
     }
 
     /**
@@ -50,6 +65,10 @@ class Register
      */
     public function match($url='')
     {
+        if(strpos($url,'?')){
+            list($url,$param)=explode('?',$url);
+            parse_str($param,$_GET);
+        }
         $host=get_domain();
         $route=Lists::get();
         foreach ($route as $item){
@@ -68,8 +87,8 @@ class Register
             header('Content-type: application/json');
             exit(json_encode(['status'=>false,'message'=>$message]));
         }
-        header('HTTP/1.1 404 Not Found');
         $host=$this->get_server().$url;
+        header('HTTP/1.1 404 Not Found');
         require Request::get('system.framework').'tpl/404.php';
     }
     private function is_rule($url,$route)
@@ -125,6 +144,7 @@ class Register
      */
     private function run($route)
     {
+        /*
         $exp=explode('/',$route['bind']);
         $n=count($exp);
         if($n==1){
@@ -144,17 +164,19 @@ class Register
 
         }
         $namespaces=sprintf('%s\\%s',str_replace('/','\\',$module),ucwords($controller));
-        $namespace='app\\controllers\\'.str_replace('/','\\',$namespaces);
-        if(!class_exists($namespace)){
-            View::error('控制器不存在:'.$namespace);
+        $namespace='app\\controllers\\'.str_replace('/','\\',$namespaces);*/
+        if(!class_exists($route['controller'])){
+            View::error('控制器不存在:'.$route['controller']);
         }
-        $class=new $namespace();
-        if(!method_exists($class,$action)){
-            View::error('控制器不存在:'.$namespace.'@'.$action);
+        $class=new $route['controller']();
+        if(!method_exists($class,$route['action'])){
+            View::error('控制器不存在:'.$route['controller'].'@'.$route['action']);
         }
+        $module=isset($route['module']) ? $route['module'] : '';
         Request::set('module',$module);
-        Request::set('controller',$controller);
-        Request::set('action',$action);
+        Request::set('controller',$route['controller']);
+        Request::set('action',$route['action']);
+
         if(Config::get('is_tpl_module')==true){
             \view()->setConfig(['module'=>$module]);
         }
@@ -163,7 +185,7 @@ class Register
         }
 
 
-        $return=$class->$action();
+        $return=$class->$route['action']();
         if(is_array($return)){
             header('Content-type:application/json');
             echo json_encode($return);
@@ -198,17 +220,39 @@ class Register
      */
     private function get_index($uri,&$array)
     {
-        foreach ($array as $item){
-            if($uri==$item['bind']){
-                if(isset($item['domain']) && $item['domain']!=''){
-                    //
-                    if($item['domain']==get_domain()){
-                        $array=$item;
-                        return true;
+        if(strpos($uri,'@')===false){
+            // 使用约定名
+            foreach ($array as $item){
+                // 寻找约定名
+                if(isset($item['as']) && $uri==$item['as']){
+                    if(isset($item['domain']) && $item['domain']!=''){
+                        //
+                        if($item['domain']==get_domain()){
+                            $array=$item;
+                            return true;
+                        }
                     }
+                    $array=$item;
+                    return true;
                 }
-                $array=$item;
-                return true;
+            }
+        }else{
+            // 使用控制器
+            $uris='app\\controllers\\'.str_replace('/','\\',$uri);
+            list($controller,$action)=explode('@',$uris);
+            foreach ($array as $item){
+                // 寻找约定名
+                if(isset($item['controller']) && $controller==$item['controller'] && $item['action']==$action){
+                    if(isset($item['domain']) && $item['domain']!=''){
+                        //
+                        if($item['domain']==get_domain()){
+                            $array=$item;
+                            return true;
+                        }
+                    }
+                    $array=$item;
+                    return true;
+                }
             }
         }
         return false;

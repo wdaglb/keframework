@@ -5,8 +5,7 @@
     <title>System Error</title>
     <style type="text/css">
         table{
-            color: #fff;
-            background: red;
+            color: #000;
             border-collapse: collapse;
         }
         table td,table th{
