@@ -12,8 +12,7 @@ class Exception
 {
     public function __construct()
     {
-        error_reporting(0);
-        ini_set('display_errors',0);
+        error_reporting(E_ALL);
         //错误处理
         set_error_handler([$this,'error_functions']);
         //异常处理
