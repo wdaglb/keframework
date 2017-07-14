@@ -9,6 +9,7 @@ namespace ke\route;
 
 
 use ke\Config;
+use ke\Exception;
 use ke\Request;
 use ke\View;
 
@@ -166,11 +167,11 @@ class Register
         $namespaces=sprintf('%s\\%s',str_replace('/','\\',$module),ucwords($controller));
         $namespace='app\\controllers\\'.str_replace('/','\\',$namespaces);*/
         if(!class_exists($route['controller'])){
-            View::error('控制器不存在:'.$route['controller']);
+            throw new Exception('控制器不存在:'.$route['controller']);
         }
         $class=new $route['controller']();
         if(!method_exists($class,$route['action'])){
-            View::error('控制器不存在:'.$route['controller'].'@'.$route['action']);
+            throw new Exception('控制器不存在:'.$route['controller'].'@'.$route['action']);
         }
         $module=isset($route['module']) ? $route['module'] : '';
         Request::set('module',$module);

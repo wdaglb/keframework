@@ -18,7 +18,7 @@ class DB
     private static function __init()
     {
         $c=Config::get('database');
-        if(empty($c)) View::throwError(['message'=>'数据库没有配置']);
+        if(empty($c)) throw new Exception('数据库没有配置');
         self::$config=array_merge(self::$config,$c);
         self::$db=Connect::boot(self::$config);
     }
@@ -60,13 +60,8 @@ class DB
             $sth->execute($bind);
             return $sth;
         } catch (\PDOException $e) {
-            $error=[
-                'type'=>$e->getCode(),
-                'message'=>$e->getMessage(),
-                'file'=>$e->getFile(),
-                'line'=>$e->getLine(),
-            ];
-            View::throwError($error);
+            throw new Exception($e->getMessage());
+            //View::throwError($error);
         }
     }
 
@@ -84,13 +79,7 @@ class DB
             $sth = self::$db->prepare($sql);
             return $sth->execute($bind);
         } catch (\PDOException $e) {
-            $error=[
-                'type'=>$e->getCode(),
-                'message'=>$e->getMessage(),
-                'file'=>$e->getFile(),
-                'line'=>$e->getLine(),
-            ];
-            View::throwError($error);
+            throw new Exception($e->getMessage());
         }
     }
 

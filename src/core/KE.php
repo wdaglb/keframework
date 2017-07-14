@@ -15,7 +15,7 @@ class KE
      */
     public static function boot($option=[])
     {
-        new Exception();
+        new Error();
         Request::set('debug',isset($option['debug']) ? $option['debug'] : false);
         if(!isset($option['root'])) View::throwError(['message'=>'请定义主路径[root]']);
         Request::set('system',[

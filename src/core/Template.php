@@ -10,6 +10,7 @@ namespace ke;
 
 use app\addons\Filters;
 use app\addons\Functions;
+use ke\exception\ErrorException;
 
 class Template
 {
@@ -40,11 +41,7 @@ class Template
             $l=get_class_methods($class);
             foreach ($l as $m) $this->live->addFilter(new \Twig_SimpleFilter($m,[$class,$m]));
         }catch (\Twig_Error $e){
-            View::throwError([
-                'message'=>$e->getMessage(),
-                'file'=>$e->getFile(),
-                'line'=>$e->getLine()
-            ]);
+            throw new Exception($e->getMessage());
         }
     }
     public function setConfig(array $name)
@@ -88,13 +85,7 @@ class Template
                 exit;
             }
         }catch (\Twig_Error $e){
-            $error=[
-                'type'=>$e->getCode(),
-                'message'=>$e->getMessage(),
-                'file'=>$e->getFile(),
-                'line'=>$e->getLine()
-            ];
-            View::throwError($error);
+            throw new Exception($e->getMessage());
         }
     }
     /**
@@ -121,13 +112,7 @@ class Template
                 exit;
             }
         }catch (\Twig_Error $e){
-            $error=[
-                'type'=>$e->getCode(),
-                'message'=>$e->getMessage(),
-                'file'=>$e->getFile(),
-                'line'=>$e->getLine()
-            ];
-            View::throwError($error);
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -148,7 +133,8 @@ class Template
                 'file'=>$e->getFile(),
                 'line'=>$e->getLine(),
             ];
-            View::throwError($error);
+            throw new Exception($e->getMessage());
+            //throw new ErrorException($e->getCode(),$e->getMessage(),$e->getFile(),$e->getTemplateLine());
         }
     }
 
