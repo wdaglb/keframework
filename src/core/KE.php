@@ -15,8 +15,8 @@ class KE
      */
     public static function boot($option=[])
     {
-        new Error();
         Request::set('debug',isset($option['debug']) ? $option['debug'] : false);
+        new Error();
         if(!isset($option['root'])) View::throwError(['message'=>'请定义主路径[root]']);
         Request::set('system',[
             'root'=>$option['root'],
@@ -32,12 +32,11 @@ class KE
         if(isset($config['csrf']['status']) && $config['csrf']['status'] && $config['csrf']['name']){
             $token=session('__csrf_token__');
             if($token==null){
-                $token=sha1(mt_rand(1111,9999));
-                session('__csrf_token__',$token);
+                $token=self::resetToken();
             }
             view()->assign('csrf_name',$config['csrf']['name']);
             view()->assign('csrf_token',$token);
-            if(Request::is_post()){
+            if(Request::isPost()){
                 if(empty($_POST[$config['csrf']['name']])){
                     View::error('非法操作');
                 }
@@ -51,6 +50,12 @@ class KE
         require Request::get('system.root').'app/route.php';
 
         Route::boot();
+    }
+    public static function resetToken()
+    {
+        $token=sha1(mt_rand(1111,9999));
+        session('__csrf_token__',$token);
+        return $token;
     }
 
 

@@ -14,22 +14,16 @@ class Controller
      */
     protected $fronts=[];
 
-    public function __isset($name)
-    {
-        if($name=='fronts') return true;
-        return false;
-    }
-
-    public function __call($name, $arguments)
+    final public function __call($name, $arguments)
     {
         if(in_array($name,$this->fronts)) return call_user_func_array([$this,$name],$arguments);
     }
 
-    public function __get($name)
+    public function getAttr($name)
     {
-        // TODO: Implement __get() method.
-        if($name=='fronts') return $this->fronts;
+        return isset($this->$name) ? $this->$name : null;
     }
+
 
     /**
      * 设置模板模块
@@ -77,7 +71,7 @@ class Controller
      */
     protected function redirect($url,$param=[])
     {
-        if(Request::is_ajax()){
+        if(Request::isAjax()){
             header('Content-type:application/json');
             if(!empty($param) && is_array($param)){
                 $value=array_merge(['status'=>false,'message'=>'跳转提示','url'=>$url],$param);

@@ -43,7 +43,7 @@ class Request
      * 判断是否为https协议
      * @return bool
      */
-    public static function is_https()
+    public static function isHttps()
     {
         if ( !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
             return true;
@@ -59,7 +59,7 @@ class Request
      * 判断当前请求是否ajax
      * @return bool
      */
-    public static function is_ajax()
+    public static function isAjax()
     {
         return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
     }
@@ -68,7 +68,7 @@ class Request
      * 判断当前请求是否get
      * @return bool
      */
-    public static function is_get()
+    public static function isGet()
     {
         return $_SERVER['REQUEST_METHOD'] == 'GET';
     }
@@ -77,7 +77,7 @@ class Request
      * 判断当前请求是否post
      * @return bool
      */
-    public static function is_post()
+    public static function isPost()
     {
         return $_SERVER['REQUEST_METHOD'] == 'POST';
     }

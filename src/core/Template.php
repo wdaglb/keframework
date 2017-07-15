@@ -69,7 +69,7 @@ class Template
      */
     public function success($message,$url=null,$wait=3){
         try{
-            if(Request::is_ajax()){
+            if(Request::isAjax()){
                 header('Content-type: application/json');
                 echo json_encode(['status'=>true,'message'=>$message]);
                 exit;
@@ -96,7 +96,7 @@ class Template
      */
     public function error($message,$url=null,$wait=3){
         try{
-            if(Request::is_ajax()){
+            if(Request::isAjax()){
                 header('Content-type: application/json');
                 echo json_encode(['status'=>false,'message'=>$message]);
                 exit;
@@ -127,12 +127,6 @@ class Template
         try{
             return $this->live->render($name.$this->config['suffix'],$this->var);
         }catch (\Twig_Error_Loader $e){
-            $error=[
-                'type'=>$e->getCode(),
-                'message'=>$e->getMessage(),
-                'file'=>$e->getFile(),
-                'line'=>$e->getLine(),
-            ];
             throw new Exception($e->getMessage());
             //throw new ErrorException($e->getCode(),$e->getMessage(),$e->getFile(),$e->getTemplateLine());
         }

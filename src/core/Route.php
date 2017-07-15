@@ -38,16 +38,15 @@ class Route
 
     /**
      * @param $name
-     * @param $classname
-     * @param $action
+     * @param $bind
      * @param string $type
      */
-    public static function register($name,$classname,$action='index',$type='get')
+    public static function reg($name,$bind,$type='get')
     {
         if(!is_object(self::$ds)){
             self::$ds=new Register();
         }
-        return self::$ds->add($name,$classname,$action,$type);
+        return self::$ds->add($name,$bind,$type);
     }
 
     public static function url($uri,$param=[])

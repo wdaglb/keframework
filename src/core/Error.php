@@ -13,6 +13,7 @@ class Error
     public function __construct()
     {
         error_reporting(0);
+        //ini_set('display_errors',0);
         set_error_handler([$this, 'appError']);
         set_exception_handler([$this, 'appException']);
         register_shutdown_function([$this, 'appShutdown']);
@@ -40,7 +41,6 @@ class Error
         if (!is_null($error = error_get_last())) {
             throw new ErrorException($error['type'], $error['message'], $error['file'], $error['line']);
         }
-
         // 写入日志
         //Log::write();
     }

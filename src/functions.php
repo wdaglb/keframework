@@ -8,23 +8,28 @@ function get_domain(){
     $host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
     return $host;
 }
-function get_ip($int=false){
-    if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
-        $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-    else if (isset($_SERVER["HTTP_CLIENT_IP"]))
-        $ip = $_SERVER["HTTP_CLIENT_IP"];
-    else if (isset($_SERVER["REMOTE_ADDR"]))
-        $ip = $_SERVER["REMOTE_ADDR"];
-    else if (getenv("HTTP_X_FORWARDED_FOR"))
-        $ip = getenv("HTTP_X_FORWARDED_FOR");
-    else if (getenv("HTTP_CLIENT_IP"))
-        $ip = getenv("HTTP_CLIENT_IP");
-    else if (getenv("REMOTE_ADDR"))
-        $ip = getenv("REMOTE_ADDR");
-    else
-        $ip = "0";
-    $ip=$int ? ip2long($ip) : $ip;
-    return $ip;
+function get_client_ip($type=false){
+    $type       =  $type ? 1 : 0;
+    static $ip  =   NULL;
+    if ($ip !== NULL) return $ip[$type];
+    if(isset($_SERVER['HTTP_X_REAL_IP'])){//nginx 代理模式下，获取客户端真实IP
+        $ip=$_SERVER['HTTP_X_REAL_IP'];
+    }elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {//客户端的ip
+        $ip     =   $_SERVER['HTTP_CLIENT_IP'];
+    }elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {//浏览当前页面的用户计算机的网关
+        $arr    =   explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $pos    =   array_search('unknown',$arr);
+        if(false !== $pos) unset($arr[$pos]);
+        $ip     =   trim($arr[0]);
+    }elseif (isset($_SERVER['REMOTE_ADDR'])) {
+        $ip     =   $_SERVER['REMOTE_ADDR'];//浏览当前页面的用户计算机的ip地址
+    }else{
+        $ip=$_SERVER['REMOTE_ADDR'];
+    }
+    // IP地址合法验证
+    $long = sprintf("%u",ip2long($ip));
+    $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
+    return $ip[$type];
 }
 function cookie($name,$value='',$time=3600,$domain=''){
     $pre=ke\Config::get('cookie.prefix');

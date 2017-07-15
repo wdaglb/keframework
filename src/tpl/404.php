@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-<h1>你正在访问的页面失踪了</h1>
+<h1>你正在访问的页面不存在或已被删除</h1>
 <small><b>URL</b>&nbsp;<span style="color: #00ff00"><?php echo $host;?></span></small>
 <hr>
 <h3>

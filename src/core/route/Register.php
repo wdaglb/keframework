@@ -28,15 +28,20 @@ class Register
         $this->group=$option;
     }
 
-    public function add($name,$controller,$action='',$type='get')
+    public function add($name,$bind,$type='get')
     {
         $prefix=isset($this->group['prefix']) ? $this->group['prefix'].'/' : '';
-        $module=isset($this->group['module']) ? $this->group['module'].'/' : '';
+        $namespace=isset($this->group['namespace']) ? $this->group['namespace'].'/' : '';
+        if(is_array($bind)){
+            $as=$bind['as'];
+            $bind=$bind['uses'];
+        }else{
+            $as='';
+        }
         $this->index=Lists::set([
+            'name'=>$as,
             'pattern'=>$prefix.$name,
-            'module'=>$module,
-            'controller'=>$controller,
-            'action'=>$action,
+            'bind'=>$namespace.$bind,
             'type'=>$type,
             'domain'=>isset($this->group['domain']) ? $this->group['domain'] : '',
         ]);
@@ -84,7 +89,7 @@ class Register
                 exit;
             }
         }
-        if(Request::is_ajax()){
+        if(Request::isAjax()){
             header('Content-type: application/json');
             exit(json_encode(['status'=>false,'message'=>$message]));
         }
@@ -127,7 +132,7 @@ class Register
      */
     private function get_server($domain='')
     {
-        if(Request::is_https()){
+        if(Request::isHttps()){
             $prefix='https://';
         }else{
             $prefix='http://';
@@ -163,30 +168,32 @@ class Register
             array_pop($exp);
             $module=implode('/',$exp);
 
+        }*/
+        if(!preg_match('/(?P<module>.*?)\/?(?P<controller>\w+)Controller@(?P<action>\w+)/',$route['bind'],$match)){
+            throw new Exception('绑定控制器规则定义错误:'.$route['bind']);
         }
-        $namespaces=sprintf('%s\\%s',str_replace('/','\\',$module),ucwords($controller));
-        $namespace='app\\controllers\\'.str_replace('/','\\',$namespaces);*/
-        if(!class_exists($route['controller'])){
-            throw new Exception('控制器不存在:'.$route['controller']);
+        $namespaces=sprintf('%s%s',($match['module']=='' ? '' : str_replace('/','\\',$match['module']).'\\'),$match['controller'].'Controller');
+        $namespace='app\\controllers\\'.str_replace('/','\\',$namespaces);
+        if(!class_exists($namespace)){
+            throw new Exception('控制器不存在:'.$namespace);
         }
-        $class=new $route['controller']();
-        if(!method_exists($class,$route['action'])){
-            throw new Exception('控制器不存在:'.$route['controller'].'@'.$route['action']);
+        $class=new $namespace();
+        if(!method_exists($class,$match['action'])){
+            throw new Exception('控制器不存在:'.$namespace.'@'.$match['action']);
         }
-        $module=isset($route['module']) ? $route['module'] : '';
-        Request::set('module',$module);
-        Request::set('controller',$route['controller']);
-        Request::set('action',$route['action']);
+        Request::set('module',$match['module']);
+        Request::set('controller',$match['controller']);
+        Request::set('action',$match['action']);
 
         if(Config::get('is_tpl_module')==true){
-            \view()->setConfig(['module'=>$module]);
+            \view()->setConfig(['module'=>$match['module']]);
         }
-        if(isset($class->fronts)){
-            foreach ($class->fronts as $method) $class->$method();
+        if($class->getAttr('fronts')){
+            foreach ($class->getAttr('fronts') as $method) $class->$method();
         }
 
 
-        $return=$class->$route['action']();
+        $return=$class->$match['action']();
         if(is_array($return)){
             header('Content-type:application/json');
             echo json_encode($return);
@@ -206,7 +213,7 @@ class Register
     {
         $list=Lists::get();
         if($this->get_index($uri,$list)===false){
-            $url='/';
+            $url=$uri;
         }else{
             $url=$this->return_rule($list,$param);
         }
@@ -225,7 +232,7 @@ class Register
             // 使用约定名
             foreach ($array as $item){
                 // 寻找约定名
-                if(isset($item['as']) && $uri==$item['as']){
+                if(isset($item['name']) && $uri==$item['name']){
                     if(isset($item['domain']) && $item['domain']!=''){
                         //
                         if($item['domain']==get_domain()){
@@ -239,11 +246,9 @@ class Register
             }
         }else{
             // 使用控制器
-            $uris='app\\controllers\\'.str_replace('/','\\',$uri);
-            list($controller,$action)=explode('@',$uris);
             foreach ($array as $item){
                 // 寻找约定名
-                if(isset($item['controller']) && $controller==$item['controller'] && $item['action']==$action){
+                if(isset($item['bind']) && $controller==$item['bind']){
                     if(isset($item['domain']) && $item['domain']!=''){
                         //
                         if($item['domain']==get_domain()){
