@@ -37,18 +37,32 @@ class Route
     }
 
     /**
+     * 注册路由
      * @param $name
      * @param $bind
-     * @param string $type
+     * @param string $option
      */
-    public static function reg($name,$bind,$type='get')
+    public static function reg($name,$bind,$option='GET')
     {
         if(!is_object(self::$ds)){
             self::$ds=new Register();
         }
-        return self::$ds->add($name,$bind,$type);
+        $domain='';
+        if(is_array($option)){
+            $domain=isset($option['domain']) ? $option['domain'] : '';
+            $method=isset($option['method']) ? $option['method'] : 'GET';
+        }else{
+            $method=$option;
+        }
+        return self::$ds->add($name,$bind,$method,$domain);
     }
 
+    /**
+     * 生成URL
+     * @param $uri
+     * @param array $param
+     * @return mixed|string
+     */
     public static function url($uri,$param=[])
     {
         if(!is_object(self::$ds)){

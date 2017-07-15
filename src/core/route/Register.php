@@ -28,7 +28,7 @@ class Register
         $this->group=$option;
     }
 
-    public function add($name,$bind,$type='get')
+    public function add($name,$bind,$method='GET',$domain='')
     {
         $prefix=isset($this->group['prefix']) ? $this->group['prefix'].'/' : '';
         $namespace=isset($this->group['namespace']) ? $this->group['namespace'].'/' : '';
@@ -42,8 +42,8 @@ class Register
             'name'=>$as,
             'pattern'=>$prefix.$name,
             'bind'=>$namespace.$bind,
-            'type'=>$type,
-            'domain'=>isset($this->group['domain']) ? $this->group['domain'] : '',
+            'method'=>$method,
+            'domain'=>($domain=='' ? (isset($this->group['domain']) ? $this->group['domain'] : '') : $domain),
         ]);
         return $this;
     }
@@ -79,6 +79,9 @@ class Register
         $route=Lists::get();
         foreach ($route as $item){
             if($item['domain']!='' && $item['domain']!=$host){
+                continue;
+            }
+            if($item['method']!='any' && $item['method']!=$this->getMethod()){
                 continue;
             }
             if($url==$item['pattern']){
@@ -201,6 +204,11 @@ class Register
             header('Content-Type: text/html; charset=utf-8');
             echo $return;
         }
+    }
+
+    private function getMethod()
+    {
+        return $_SERVER['REQUEST_METHOD'];
     }
 
     /**
