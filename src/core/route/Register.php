@@ -191,6 +191,9 @@ class Register
         if(Config::get('is_tpl_module')==true){
             \view()->setConfig(['module'=>$match['module']]);
         }
+        if(Config::get('is_tpl_controller')==true){
+            \view()->setConfig(['controller'=>$match['controller']]);
+        }
         if($class->getAttr('fronts')){
             foreach ($class->getAttr('fronts') as $method) $class->$method();
         }
@@ -203,6 +206,10 @@ class Register
         }else{
             header('Content-Type: text/html; charset=utf-8');
             echo $return;
+        }
+        if(Request::get('debug')){
+            $included_files=get_included_files();
+            require Request::get('system.framework').'tpl/debug.php';
         }
     }
 
@@ -256,7 +263,7 @@ class Register
             // 使用控制器
             foreach ($array as $item){
                 // 寻找约定名
-                if(isset($item['bind']) && $controller==$item['bind']){
+                if(isset($item['bind']) && $uri==$item['bind']){
                     if(isset($item['domain']) && $item['domain']!=''){
                         //
                         if($item['domain']==get_domain()){

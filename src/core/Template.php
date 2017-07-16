@@ -14,53 +14,34 @@ use ke\exception\ErrorException;
 
 class Template
 {
-    private $config=[
-        // 模板路径
-        'template_path'=>'./resources/views/',
-        // 编译路径
-        'compile_path'=>'./runtime/compile/',
-        // 模板后缀
-        'suffix'=>'.htm',
-    ];
-    private $var=[];
+    private $instance;
 
-    private $live;
-    private function _init()
+    public function __construct()
     {
-        if(is_object($this->live)) return;
-        try{
-            $loader = new \Twig_Loader_Filesystem(Request::get('system.root').$this->config['template_path'].(isset($this->config['module']) ? $this->config['module'] : ''));
-            $this->live = new \Twig_Environment($loader, array(
-                'cache' => Request::get('system.root').$this->config['compile_path'],
-                'debug'=>Request::get('debug')
-            ));
-            $class=new Functions();
-            $l=get_class_methods($class);
-            foreach ($l as $m) $this->live->addFunction(new \Twig_SimpleFunction($m,[$class,$m]));
-            $class=new Filters();
-            $l=get_class_methods($class);
-            foreach ($l as $m) $this->live->addFilter(new \Twig_SimpleFilter($m,[$class,$m]));
-        }catch (\Twig_Error $e){
-            throw new Exception($e->getMessage());
-        }
-    }
-    public function setConfig(array $name)
-    {
-        $this->config=array_merge($this->config,$name);
-    }
-    public function assign($name,$value=null)
-    {
-        if(is_array($name)){
-            $this->var=array_merge($this->var,$name);
-        }else{
-            $this->var[$name]=$value;
-        }
+        $c=Config::get('template');
+        if(!isset($c['type'])) throw new Exception('请设置template引擎类型[type]');
+        if(!isset($c['path'])) throw new Exception('请设置template目录[path]');
+        if(!isset($c['compile'])) throw new Exception('请设置template编译目录[compile]');
+        if(!isset($c['suffix'])) throw new Exception('请设置template后缀名[suffix]');
+        $type='ke\\template\\'.ucwords($c['type']);
+        $this->instance=new $type($c);
     }
 
-    private function getUpUrl()
+    public function setConfig(array $option)
     {
-        return isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+        $this->instance->setConfig($option);
     }
+
+    /**
+     * 传入变量
+     * @param $name
+     * @param array $value
+     */
+    public function assign($name,$value=[])
+    {
+        $this->instance->assign($name,$value);
+    }
+
     /**
      * 成功提示
      * @param $message
@@ -68,24 +49,20 @@ class Template
      * @return string
      */
     public function success($message,$url=null,$wait=3){
-        try{
-            if(Request::isAjax()){
-                header('Content-type: application/json');
-                echo json_encode(['status'=>true,'message'=>$message]);
-                exit;
-            }
-            $url=is_null($url) ? $this->getUpUrl() : $url;
-            if(is_file(Request::get('system.root').$this->config['template_path'].(isset($this->config['module']) ? $this->config['module'] : '').'/success'.$this->config['suffix'])){
-                $this->_init();
-                echo $this->live->render('success'.$this->config['suffix'],['status'=>true,'message'=>$message,'url'=>$url,'wait'=>$wait]);
-                exit;
-            }else{
-                $status=true;
-                require Request::get('system.framework').'tpl/jump.php';
-                exit;
-            }
-        }catch (\Twig_Error $e){
-            throw new Exception($e->getMessage());
+        if(Request::isAjax()){
+            header('Content-type: application/json');
+            echo json_encode(['status'=>true,'message'=>$message]);
+            exit;
+        }
+        $url=is_null($url) ? $this->getUpUrl() : $url;
+        if($this->instance->isTemplateFile('success')){
+            $this->instance->assign(['status'=>true,'message'=>$message,'url'=>$url,'wait'=>$wait]);
+            echo $this->instance->render('success');
+            exit;
+        }else{
+            $status=true;
+            require Request::get('system.framework').'tpl/jump.php';
+            exit;
         }
     }
     /**
@@ -95,24 +72,20 @@ class Template
      * @return string
      */
     public function error($message,$url=null,$wait=3){
-        try{
-            if(Request::isAjax()){
-                header('Content-type: application/json');
-                echo json_encode(['status'=>false,'message'=>$message]);
-                exit;
-            }
-            $url=is_null($url) ? $this->getUpUrl() : $url;
-            if(is_file(Request::get('system.root').$this->config['template_path'].(isset($this->config['module']) ? $this->config['module'] : '').'/error'.$this->config['suffix'])){
-                $this->_init();
-                echo $this->live->render('error'.$this->config['suffix'],['status'=>true,'message'=>$message,'url'=>$url,'wait'=>$wait]);
-                exit;
-            }else{
-                $status=false;
-                require Request::get('system.framework').'tpl/jump.php';
-                exit;
-            }
-        }catch (\Twig_Error $e){
-            throw new Exception($e->getMessage());
+        if(Request::isAjax()){
+            header('Content-type: application/json');
+            echo json_encode(['status'=>false,'message'=>$message]);
+            exit;
+        }
+        $url=is_null($url) ? $this->getUpUrl() : $url;
+        if($this->instance->isTemplateFile('error')){
+            $this->instance->assign(['status'=>false,'message'=>$message,'url'=>$url,'wait'=>$wait]);
+            echo $this->instance->render('error');
+            exit;
+        }else{
+            $status=false;
+            require Request::get('system.framework').'tpl/jump.php';
+            exit;
         }
     }
 
@@ -123,13 +96,7 @@ class Template
      */
     public function render($name)
     {
-        $this->_init();
-        try{
-            return $this->live->render($name.$this->config['suffix'],$this->var);
-        }catch (\Twig_Error_Loader $e){
-            throw new Exception($e->getMessage());
-            //throw new ErrorException($e->getCode(),$e->getMessage(),$e->getFile(),$e->getTemplateLine());
-        }
+        return $this->instance->render($name);
     }
 
 }

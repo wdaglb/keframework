@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ke\\": ["src/core","src/addons"]
+      "ke\\": ["src/core","src/addons","src/interfaces"]
     }
   }
 }
