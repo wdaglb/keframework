@@ -31,6 +31,8 @@
 <div class="ke-debug">
     <p>
         [ <a href="javascript:loadFiles();">加载文件</a> ] <?php echo count($included_files);?>
+        &nbsp;
+        [ 执行时间 ] <?php echo $runtime;?>ms
     </p>
     <div id="loadfiles" class="li">
         <?php foreach ($included_files as $i=>$item):?>

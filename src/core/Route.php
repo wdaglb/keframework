@@ -58,6 +58,39 @@ class Route
     }
 
     /**
+     * 注册GET路由
+     * @param $name
+     * @param $bind
+     * @return $this
+     */
+    public static function get($name,$bind)
+    {
+        return self::reg($name,$bind);
+    }
+
+    /**
+     * 注册POST路由
+     * @param $name
+     * @param $bind
+     * @return $this
+     */
+    public static function post($name,$bind)
+    {
+        return self::reg($name,$bind,'POST');
+    }
+
+    /**
+     * 注册所有请求路由
+     * @param $name
+     * @param $bind
+     * @return $this
+     */
+    public static function any($name,$bind)
+    {
+        return self::reg($name,$bind,'any');
+    }
+
+    /**
      * 生成URL
      * @param $uri
      * @param array $param

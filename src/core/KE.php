@@ -16,6 +16,9 @@ class KE
     public static function boot($option=[])
     {
         Request::set('debug',isset($option['debug']) ? $option['debug'] : false);
+        if(Request::get('debug')){
+            Request::set('start_time',microtime(true));
+        }
         new Error();
         if(!isset($option['root'])) View::throwError(['message'=>'请定义主路径[root]']);
         Request::set('system',[

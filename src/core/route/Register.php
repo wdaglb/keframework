@@ -209,6 +209,7 @@ class Register
         }
         if(Request::get('debug')){
             $included_files=get_included_files();
+            $runtime=microtime(true)-Request::get('start_time');
             require Request::get('system.framework').'tpl/debug.php';
         }
     }

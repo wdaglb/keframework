@@ -23,7 +23,7 @@ class Template
         if(!isset($c['path'])) throw new Exception('请设置template目录[path]');
         if(!isset($c['compile'])) throw new Exception('请设置template编译目录[compile]');
         if(!isset($c['suffix'])) throw new Exception('请设置template后缀名[suffix]');
-        $type='ke\\template\\'.ucwords($c['type']);
+        $type='ke\\view\\'.ucwords($c['type']);
         $this->instance=new $type($c);
     }
 
