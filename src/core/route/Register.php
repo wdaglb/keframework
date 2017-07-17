@@ -272,11 +272,12 @@ class Register
         }
 
         if(preg_match_all('/\{(\w+)\}/',$uri,$matchs,PREG_SET_ORDER)){
-            foreach ($matchs as $item){
-                if(isset($param[$item[1]])){
-                    $uri=str_replace($item[0],$param[$item[1]],$uri);
+            foreach ($matchs as $tm){
+                if(isset($param[$tm[1]])){
+                    $uri=str_replace($tm[0],$param[$tm[1]],$uri);
+                    unset($param[$tm[1]]);
                 }else{
-                    $uri=str_replace($item[0],'0',$uri);
+                    $uri=str_replace($tm[0],'0',$uri);
                 }
             }
             if(!empty($param)){
