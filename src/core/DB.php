@@ -33,7 +33,7 @@ class DB
     public static function query($sql,$bind=[])
     {
         try{
-            $bind=is_string($bind) ? [$bind] : $bind;
+            $bind=is_array($bind) ? $bind : [$bind];
             self::$db=Connect::boot();
             Connect::comSql($sql);
             $sth = self::$db->prepare($sql);
@@ -54,7 +54,7 @@ class DB
     public static function execute($sql,$bind=[])
     {
         try{
-            $bind=is_string($bind) ? [$bind] : $bind;
+            $bind=is_array($bind) ? $bind : [$bind];
             self::$db=Connect::boot();
             Connect::comSql($sql);
             $sth = self::$db->prepare($sql);
