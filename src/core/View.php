@@ -13,7 +13,7 @@ class View
     public static function error($message)
     {
         Log::write(' [ error ] '.$message);
-        if(Request::is_ajax()){
+        if(Request::isAjax()){
             header('Content-type:application/json');
             echo json_encode(['status'=>false,'message'=>$message]);
             exit;

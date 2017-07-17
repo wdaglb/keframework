@@ -9,7 +9,6 @@ namespace ke;
 
 
 use ke\DB\Connect;
-use ke\DB\Query;
 
 class DB
 {
@@ -17,6 +16,14 @@ class DB
 
     private static $db;
 
+    /**
+     * 获取最新插入的一条ID
+     * @return int
+     */
+    public static function getLastInsertId()
+    {
+        return self::$db->lastInsertId();
+    }
     /**
      * 执行查询语句
      * @param $sql

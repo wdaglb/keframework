@@ -27,8 +27,13 @@
         overflow: auto;
         border-bottom: solid 1px #0C0C0C;
     }
+    .ke-debug .right{
+        right: 10px;
+        top: 0;
+        position: absolute;
+    }
 </style>
-<div class="ke-debug">
+<div class="ke-debug" id="ke-debug">
     <p>
         [ <a href="javascript:loadFiles();">加载文件</a> ] <?php echo count($included_files);?>
         &nbsp;
@@ -39,6 +44,7 @@
         <div><?php echo $i;?>/<?php echo $item;?></div>
         <?php endforeach;?>
     </div>
+    <p class="right"><a href="javascript:hide();"> 隐藏</a></p>
 </div>
 <script type="text/javascript">
     function loadFiles() {
@@ -48,5 +54,10 @@
         }else{
             id.style.display="block";
         }
+    }
+
+    function hide() {
+        var id=document.getElementById('ke-debug');
+        id.style.display="none";
     }
 </script>

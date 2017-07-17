@@ -94,7 +94,7 @@ class Register
         }
         if(Request::isAjax()){
             header('Content-type: application/json');
-            exit(json_encode(['status'=>false,'message'=>$message]));
+            exit(json_encode(['status'=>false,'message'=>'404 Not Found']));
         }
         $host=$this->get_server().$url;
         header('HTTP/1.1 404 Not Found');
@@ -153,25 +153,6 @@ class Register
      */
     private function run($route)
     {
-        /*
-        $exp=explode('/',$route['bind']);
-        $n=count($exp);
-        if($n==1){
-            list($module,$controller,$action)=[$route['bind'],'index','index'];
-        }elseif($n==2){
-            $controller=end($exp);
-            array_pop($exp);
-            $module=end($exp);
-            array_pop($exp);
-            $action='index';
-        }else{
-            $action=end($exp);
-            array_pop($exp);
-            $controller=end($exp);
-            array_pop($exp);
-            $module=implode('/',$exp);
-
-        }*/
         if(!preg_match('/(?P<module>.*?)\/?(?P<controller>\w+)Controller@(?P<action>\w+)/',$route['bind'],$match)){
             throw new Exception('绑定控制器规则定义错误:'.$route['bind']);
         }
@@ -207,7 +188,7 @@ class Register
             header('Content-Type: text/html; charset=utf-8');
             echo $return;
         }
-        if(Request::get('debug')){
+        if(Request::get('debug') && Config::get('ke-debug')){
             $included_files=get_included_files();
             $runtime=microtime(true)-Request::get('start_time');
             require Request::get('system.framework').'tpl/debug.php';

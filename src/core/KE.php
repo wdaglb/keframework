@@ -56,7 +56,7 @@ class KE
     }
     public static function resetToken()
     {
-        $token=sha1(mt_rand(1111,9999));
+        $token=sha1(mt_rand(1111,9999).$_SERVER['REQUEST_URI']).uniqid();
         session('__csrf_token__',$token);
         return $token;
     }

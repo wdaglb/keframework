@@ -49,12 +49,12 @@ class Template
      * @return string
      */
     public function success($message,$url=null,$wait=3){
+        KE::resetToken();
         if(Request::isAjax()){
             header('Content-type: application/json');
             echo json_encode(['status'=>true,'message'=>$message]);
             exit;
         }
-        $url=is_null($url) ? $this->getUpUrl() : $url;
         if($this->instance->isTemplateFile('success')){
             $this->instance->assign(['status'=>true,'message'=>$message,'url'=>$url,'wait'=>$wait]);
             echo $this->instance->render('success');
@@ -77,7 +77,6 @@ class Template
             echo json_encode(['status'=>false,'message'=>$message]);
             exit;
         }
-        $url=is_null($url) ? $this->getUpUrl() : $url;
         if($this->instance->isTemplateFile('error')){
             $this->instance->assign(['status'=>false,'message'=>$message,'url'=>$url,'wait'=>$wait]);
             echo $this->instance->render('error');
