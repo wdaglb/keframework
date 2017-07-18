@@ -1,0 +1,5 @@
+{
+  "require": {
+    "ke/framework":"*"
+  }
+}
