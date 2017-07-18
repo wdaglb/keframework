@@ -25,7 +25,8 @@ class KE
             'root'=>$option['root'],
             'framework'=>__DIR__.'/../'
         ]);
-        self::autoload();
+        spl_autoload_register('ke\KE::autoload');
+        //self::autoload();
         require Request::get('system.framework').'helper.php';
         require Request::get('system.framework').'functions.php';
 
@@ -62,19 +63,25 @@ class KE
     }
 
 
-    public static function autoload()
+    public static function autoload($class)
     {
-        spl_autoload_register(function ($class){
-            if(substr($class,0,4)=='app\\'){
-                $path=Request::get('system.root').str_replace('\\','/',$class).'.php';
-                if(is_file($path)){
-                    require $path;
-                }else{
-                    return false;
-                }
+        $pre=explode('\\',$class);
+        if($pre[0]=='app'){
+            $path=Request::get('system.root').str_replace('\\','/',$class).'.php';
+            if(is_file($path)){
+                require $path;
+            }else{
+                return false;
             }
-            return false;
-        });
+        }else{
+            $path=Request::get('system.root').'extend/'.str_replace('\\','/',$class).'.php';
+            if(is_file($path)){
+                require $path;
+            }else{
+                return false;
+            }
+        }
+        return false;
     }
 
 }

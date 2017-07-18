@@ -220,15 +220,16 @@ class Validate
             }
         }
     }
-    private function setMsg($name,$from){
-        if(empty($this->msge[$from][$name])){
-            if(empty($this->msge[$from])){
-                $error=$this->msg[$name];
-            }else{
-                $error=$this->msge[$from];
-            }
-        }else{
+    private function setMsg($name,$from)
+    {
+        if(isset($this->msge[$from][$name])){
             $error=$this->msge[$from][$name];
+        }else{
+            if(isset($this->msge[$from]) && !is_array($this->msge[$from])){
+                $error=$this->msge[$from];
+            }else{
+                $error=$this->msg[$name];
+            }
         }
         $error=str_replace('[replace]',$from,$error);
         $this->error=$error;

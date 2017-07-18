@@ -10,6 +10,7 @@ namespace ke\route;
 
 use ke\Config;
 use ke\Exception;
+use ke\Log;
 use ke\Request;
 use ke\View;
 
@@ -197,6 +198,7 @@ class Register
 
     private function getMethod()
     {
+        Log::write($_SERVER['REQUEST_METHOD']);
         return $_SERVER['REQUEST_METHOD'];
     }
 
