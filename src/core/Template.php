@@ -49,7 +49,6 @@ class Template
      * @return string
      */
     public function success($message,$url=null,$wait=3){
-        KE::resetToken();
         if(Request::isAjax()){
             header('Content-type: application/json');
             echo json_encode(['status'=>true,'message'=>$message]);

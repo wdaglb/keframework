@@ -34,22 +34,25 @@ class KE
         $config=require Request::get('system.root').'config/config.php';
         Config::set($config);
         if(isset($config['csrf']['status']) && $config['csrf']['status'] && $config['csrf']['name']){
-            $token=session('__csrf_token__');
-            if($token==null){
-                $token=self::resetToken();
-            }
-            view()->assign('csrf_name',$config['csrf']['name']);
-            view()->assign('csrf_token',$token);
             if(Request::isPost()){
+                $token=session('__csrf_token__');
+                if($token==null){
+                    View::error('非法操作');
+                }
                 if(empty($_POST[$config['csrf']['name']])){
                     View::error('非法操作');
                 }
                 if($_POST[$config['csrf']['name']]!=$token){
                     View::error('非法操作');
                 }
+            }elseif(Request::isGet()){
+                $token=self::resetToken();
+                view()->assign('csrf_name',$config['csrf']['name']);
+                view()->assign('csrf_token',$token);
             }
 
         }
+        unset($config);
         if(!is_file(Request::get('system.root').'app/route.php')) View::throwError(['message'=>'请创建路由文件[主目录/app/route.php]']);
         require Request::get('system.root').'app/route.php';
 
