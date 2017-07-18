@@ -62,7 +62,7 @@ class Twig implements \ke\interfaces\Template
      */
     public function isTemplateFile($name)
     {
-        return is_file(Request::get('system.root').$this->config['template_path'].(isset($this->config['module']) ? $this->config['module'] : '').'/'.$name.$this->config['suffix']);
+        return is_file(Request::get('system.root').$this->config['path'].(isset($this->config['module']) ? $this->config['module'] : '').'/'.$name.$this->config['suffix']);
     }
 
     /**
