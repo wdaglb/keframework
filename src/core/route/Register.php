@@ -198,7 +198,6 @@ class Register
 
     private function getMethod()
     {
-        Log::write($_SERVER['REQUEST_METHOD']);
         return $_SERVER['REQUEST_METHOD'];
     }
 
