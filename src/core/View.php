@@ -32,7 +32,7 @@ class View
         $error['file']=isset($error['file']) ? $error['file'] : null;
         $error['line']=isset($error['line']) ? $error['line'] : null;
         Log::write(sprintf(" [ time ] %s [ 加载文件数 ] %s \r\n [ error ] %s\r\n [ file ] %s [ line ] %s",date('Y-m-d H:i:s'),count(get_included_files()),$error['message'],$error['file'],$error['line']));
-        if(Request::is_ajax()){
+        if(Request::isAjax()){
             header('Content-type:application/json');
             if(!$debug){
                 $error['message']='系统异常停止';
