@@ -33,6 +33,16 @@ class Connect
 
     }
 
+    /**
+     * 获得数据表前缀
+     * @return mixed|string
+     */
+    public static function getPrefix()
+    {
+        if(empty(self::$config)) self::$config=Config::get('database');
+        return isset(self::$config['prefix']) ? self::$config['prefix'] : '';
+    }
+
 
     public static function comSql(&$sql)
     {
