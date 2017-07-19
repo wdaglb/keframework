@@ -39,7 +39,7 @@ class Controller
      * @param $name
      * @return string
      */
-    protected function render($name)
+    protected function render($name='')
     {
         return view()->render($name);
     }

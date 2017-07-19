@@ -12,6 +12,7 @@ use app\addons\Filters;
 use app\addons\Functions;
 use ke\Exception;
 use ke\Request;
+use ke\Config;
 
 class Twig implements \ke\interfaces\Template
 {
@@ -70,9 +71,10 @@ class Twig implements \ke\interfaces\Template
      * @param $name
      * @return string
      */
-    public function render($name)
+    public function render($name='')
     {
         $this->_init();
+        if($name=='') $name=Config::get('is_tpl_action') ? Request::get('action') : $name;
         try{
             return $this->live->render((isset($this->config['controller']) ? $this->config['controller'].'/' : '').$name.$this->config['suffix'],$this->var);
         }catch (\Twig_Error_Loader $e){
