@@ -5,6 +5,10 @@
  * Site: http://cms.iydou.cn/
  */
 
+/**
+ * 视图
+ * @return \ke\Template|mixed
+ */
 function view()
 {
     $view=\ke\Request::get('view');
@@ -13,4 +17,15 @@ function view()
         \ke\Request::set('view',$view);
     }
     return $view;
+}
+
+/**
+ * 生成URL
+ * @param $uri
+ * @param $param
+ * @return mixed|string
+ */
+function url($uri,$param=[])
+{
+    return \ke\Route::url($uri,$param);
 }

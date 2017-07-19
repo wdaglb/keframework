@@ -106,13 +106,17 @@ class Register
         if(strpos($route,'{')===false) return false;
         $key=[];
         $this->get_preg($route);
-        $route=preg_replace_callback('/\{(\w+)\}/',function ($to) use(&$key){
+        $route=preg_replace_callback('/\{(\w+)(\?*)\}/',function ($to) use(&$key){
             $key[]=$to[1];
-            return '(\w+)';
+            if($to[2]==''){
+                return '(\w+)';
+            }else{
+                return '*(\w*)';
+            }
         },$route);
         if(preg_match_all($route,$url,$matchs,PREG_SET_ORDER)){
             foreach ($key as $index=>$name){
-                $_GET[$name]=$matchs[$index][1];
+                $_GET[$name]=$matchs[0][$index+1];
                 $_REQUEST[$name]=$_GET[$name];
             }
             return true;
@@ -127,7 +131,7 @@ class Register
     private function get_preg(&$s)
     {
         $s=str_replace('/','\/',$s);
-        $s='/'.$s.'/';
+        $s='/'.$s.'$/';
     }
 
     /**
@@ -272,7 +276,7 @@ class Register
             return $this->get_server($item['domain']).$uri;
         }
 
-        if(preg_match_all('/\{(\w+)\}/',$uri,$matchs,PREG_SET_ORDER)){
+        if(preg_match_all('/\{(\w+)\?*\}/',$uri,$matchs,PREG_SET_ORDER)){
             foreach ($matchs as $tm){
                 if(isset($param[$tm[1]])){
                     $uri=str_replace($tm[0],$param[$tm[1]],$uri);
