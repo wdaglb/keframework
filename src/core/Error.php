@@ -21,7 +21,7 @@ class Error
 
     public function appError($errno, $errstr, $errfile = '', $errline = 0, $errcontext = [])
     {
-        throw new ErrorException($errno, $errstr, $errfile, $errline, $errcontext);
+        throw new ErrorException($errno, $errstr, $errfile, $errline);
     }
     /**
      * Exception Handler
@@ -29,7 +29,7 @@ class Error
      */
     public function appException($e)
     {
-        throw new ErrorException($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
+        throw new ErrorException($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTrace());
 
     }
 

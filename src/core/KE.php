@@ -15,7 +15,7 @@ class KE
      */
     public static function boot($option=[])
     {
-        Request::set('debug',isset($option['debug']) ? $option['debug'] : false);
+        Request::set('debug',empty($option['debug']) ? false : $option['debug']);
         if(Request::get('debug')){
             Request::set('start_time',microtime(true));
         }

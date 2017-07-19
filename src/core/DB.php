@@ -15,7 +15,6 @@ class DB
     private static $config=[];
 
     private static $db;
-
     /**
      * 获取最新插入的一条ID
      * @return int
@@ -25,42 +24,6 @@ class DB
         return self::$db->lastInsertId();
     }
 
-    /**
-     * 插入数据
-     * @param $table 表名
-     * @param array $data 数据
-     * @return bool
-     * @throws Exception
-     */
-    public static function insert($table,array $data)
-    {
-        $start=microtime(true);
-        $c=end($data);
-        $column='';
-        $values='';
-        foreach ($data as $key=>$item){
-            $bind[$key]=$item;
-            if($c==$item){
-                $column.="`{$key}`";
-                $values.=":{$key}";
-            }else{
-                $column.="`{$key}`,";
-                $values.=":{$key},";
-            }
-        }
-
-        $sql=sprintf('INSERT INTO `%s` (%s) VALUES (%s)',Connect::getPrefix().$table,$column,$values);
-        try{
-            self::$db=Connect::boot();
-            $sth = self::$db->prepare($sql);
-            return $sth->execute($data);
-        } catch (\PDOException $e) {
-            Log::write(' [ DB ] '.$e->getMessage());
-            //throw new Exception($e->getMessage());
-            return false;
-        }
-
-    }
     /**
      * 执行查询语句
      * @param $sql

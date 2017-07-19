@@ -31,6 +31,26 @@ function get_client_ip($type=false){
     $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
     return $ip[$type];
 }
+
+/**
+ * 返回数组维度
+ * @param $arr
+ * @return mixed
+ */
+function arrayLevel($arr){
+    $al = array(0);
+    function aL($arr,&$al,$level=0){
+        if(is_array($arr)){
+            $level++;
+            $al[] = $level;
+            foreach($arr as $v){
+                aL($v,$al,$level);
+            }
+        }
+    }
+    aL($arr,$al);
+    return max($al);
+}
 function cookie($name,$value='',$time=3600,$domain=''){
     $pre=ke\Config::get('cookie.prefix');
     if($value===''){
