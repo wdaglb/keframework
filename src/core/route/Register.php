@@ -161,8 +161,8 @@ class Register
         if(!preg_match('/(?P<module>.*?)\/?(?P<controller>\w+)Controller@(?P<action>\w+)/',$route['bind'],$match)){
             throw new Exception('绑定控制器规则定义错误:'.$route['bind']);
         }
-        $namespaces=sprintf('%s%s',($match['module']=='' ? '' : str_replace('/','\\',$match['module']).'\\'),$match['controller'].'Controller');
-        $namespace='app\\controllers\\'.str_replace('/','\\',$namespaces);
+        $namespaces=sprintf('%scontroller\\%s',($match['module']=='' ? '' : str_replace('/','\\',$match['module']).'\\'),$match['controller'].'Controller');
+        $namespace='app\\'.str_replace('/','\\',$namespaces);
         if(!class_exists($namespace)){
             throw new Exception('控制器不存在:'.$namespace);
         }
@@ -171,20 +171,21 @@ class Register
             throw new Exception('控制器不存在:'.$namespace.'@'.$match['action']);
         }
         Request::set('module',$match['module']);
-        Request::set('controller',$match['controller']);
-        Request::set('action',$match['action']);
+        Request::set('controller',strtolower($match['controller']));
+        Request::set('action',pascal_to_line($match['action']));
 
         if(Config::get('is_tpl_module')==true){
             \view()->setConfig(['module'=>$match['module']]);
         }
         if(Config::get('is_tpl_controller')==true){
-            \view()->setConfig(['controller'=>$match['controller']]);
+            \view()->setConfig(['controller'=>strtolower($match['controller'])]);
         }
         if($class->getAttr('fronts')){
             foreach ($class->getAttr('fronts') as $method) $class->$method();
         }
 
 
+        \view()->assign('request',Request::get());
         $return=$class->$match['action']();
         if(is_array($return)){
             header('Content-type:application/json');

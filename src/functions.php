@@ -41,3 +41,19 @@ function get_client_ip($type=false){
     $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
     return $ip[$type];
 }
+
+
+/**
+ * pascal转下划线命名
+ * @param  string $value 需要转换的字符串
+ * @return string        转换后的字符
+ */
+function pascal_to_line($value='')
+{
+    $exp=explode('\\',$value);
+    $table=end($exp);
+    $table=preg_replace_callback('/([a-z])([A-Z])/',function($to){
+        return "{$to[1]}_{$to[2]}";
+    }, $table);
+    return strtolower($table);
+}

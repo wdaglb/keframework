@@ -40,16 +40,27 @@ class Config
 
     /**
      * 获取配置值
-     * @param $name
+     * @param $name   节点名
+     * @param $values 默认值
      * @return mixed
      */
-    public static function get($name)
+    public static function get($name,$values=null)
     {
         if(strstr($name,'.')===false){
             return isset(self::$config[$name]) ? self::$config[$name] : null;
         }else{
-            list($l,$r)=explode('.',$name);
-            return isset(self::$config[$l][$r]) ? self::$config[$l][$r] : null;
+            $list=explode('.',$name);
+            $config=self::$config;
+            // 循环读取
+            foreach ($list as $key) {
+                // 判断是否存在,不存在直接返回默认值
+                if(isset($config[$key])){
+                    $config=$config[$key];
+                }else{
+                    return $values;
+                }
+            }
+            return $config;
         }
     }
 

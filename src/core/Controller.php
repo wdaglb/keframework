@@ -65,6 +65,18 @@ class Controller
     }
 
     /**
+     * 格式化JSON输出
+     * @param  int    $code    状态码
+     * @param  string $message 消息
+     * @param  array $data     返回数据
+     * @return void
+     */
+    protected function json($code,$message='',$data=[])
+    {
+        View::json($code,$message,$data);
+    }
+
+    /**
      * 跳转
      * @param $url
      * @param array $param

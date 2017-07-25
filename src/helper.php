@@ -31,6 +31,21 @@ function url($uri,$param=[])
 }
 
 /**
+ * 全局变量
+ * @param  string $key   节点名
+ * @param  string $value 值
+ * @return mixed
+ */
+function storage($key='',$value='')
+{
+    if($key=='') return $GLOBALS;
+    if($value===''){
+        return isset($GLOBALS[$key]) ? $GLOBALS[$key] : null;
+    }else{
+        return $GLOBALS[$key]=$value;
+    }
+}
+/**
  * 获取GET数据
  * @param string $key
  * @return string
@@ -85,7 +100,7 @@ function cookie($name,$value='',$time=3600,$domain=''){
  * @return string
  */
 function session($name,$value=''){
-    if(!isset($_SESSION)){session_start();}
+    //if(!isset($_SESSION)){session_start();}
     $pre=\ke\Config::get('session.prefix');
     if($value===''){
         if(isset($_SESSION[$pre.$name])){
@@ -96,14 +111,14 @@ function session($name,$value=''){
     }elseif(is_null($value)){
         if(strpos($name,'.')===false){
             if(isset($pre)){
-                unset($_SESSION[ke\Config::get('session_pre')][$name]);
+                unset($_SESSION[$pre][$name]);
             }else{
                 unset($_SESSION[$name]);
             }
         }else{
             list($name1,$name2)=explode('.',$name);
             if(isset($pre)){
-                unset($_SESSION[ke\Config::get('session_pre')][$name1][$name2]);
+                unset($_SESSION[$pre][$name1][$name2]);
             }else{
                 unset($_SESSION[$name1][$name2]);
             }
@@ -111,14 +126,14 @@ function session($name,$value=''){
     }else{
         if(strpos($name,'.')===false){
             if(isset($pre)){
-                $_SESSION[ke\Config::get('session_pre')][$name]=$value;
+                $_SESSION[$pre][$name]=$value;
             }else{
                 $_SESSION[$name]=$value;
             }
         }else{
             list($name1,$name2)=explode('.',$name);
             if(isset($pre)){
-                $_SESSION[ke\Config::get('session_pre')][$name1][$name2]=$value;
+                $_SESSION[$pre][$name1][$name2]=$value;
             }else{
                 $_SESSION[$name1][$name2]=$value;
             }

@@ -10,13 +10,17 @@ namespace ke;
 
 class View
 {
+    public static function json($code,$message='',$data=[])
+    {
+        header('Content-type:application/json');
+        echo json_encode(['status'=>$code,'result'=>['message'=>$message,'data'=>$data]]);
+        exit;
+    }
     public static function error($message)
     {
         Log::write(' [ error ] '.$message);
         if(Request::isAjax()){
-            header('Content-type:application/json');
-            echo json_encode(['status'=>false,'message'=>$message]);
-            exit;
+            self::json(100,$message);
         }
         require Request::get('system.framework').'tpl/msg.php';
         die();

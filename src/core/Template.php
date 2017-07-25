@@ -20,7 +20,7 @@ class Template
     {
         $c=Config::get('template');
         if(!isset($c['type'])) throw new Exception('请设置template引擎类型[type]');
-        if(!isset($c['path'])) throw new Exception('请设置template目录[path]');
+        //if(!isset($c['path'])) throw new Exception('请设置template目录[path]');
         if(!isset($c['compile'])) throw new Exception('请设置template编译目录[compile]');
         if(!isset($c['suffix'])) throw new Exception('请设置template后缀名[suffix]');
         $type='ke\\view\\'.ucwords($c['type']);
@@ -49,13 +49,8 @@ class Template
      * @return string
      */
     public function success($message,$url=null,$wait=3){
-        if(Request::isAjax()){
-            header('Content-type: application/json');
-            echo json_encode(['status'=>true,'message'=>$message]);
-            exit;
-        }
         if($this->instance->isTemplateFile('success')){
-            $this->instance->assign(['status'=>true,'message'=>$message,'url'=>$url,'wait'=>$wait]);
+            $this->instance->assign(['status'=>0,'message'=>$message,'url'=>$url,'wait'=>$wait]);
             echo $this->instance->render('success');
             exit;
         }else{
@@ -71,11 +66,6 @@ class Template
      * @return string
      */
     public function error($message,$url=null,$wait=3){
-        if(Request::isAjax()){
-            header('Content-type: application/json');
-            echo json_encode(['status'=>false,'message'=>$message]);
-            exit;
-        }
         if($this->instance->isTemplateFile('error')){
             $this->instance->assign(['status'=>false,'message'=>$message,'url'=>$url,'wait'=>$wait]);
             echo $this->instance->render('error');
@@ -94,6 +84,8 @@ class Template
      */
     public function render($name)
     {
+        $var=storage();
+        $this->instance->assign('KE',$var);
         return $this->instance->render($name);
     }
 

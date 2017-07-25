@@ -24,9 +24,9 @@ class Twig implements \ke\interfaces\Template
     private function _init()
     {
         try{
-            $loader = new \Twig_Loader_Filesystem(Request::get('system.root').$this->config['path'].(isset($this->config['module']) ? $this->config['module'] : ''));
+            $loader = new \Twig_Loader_Filesystem($GLOBALS['ROOT'].'app/'.(isset($this->config['module']) ? $this->config['module'] : '').'/view/');
             $this->live = new \Twig_Environment($loader, array(
-                'cache' => Request::get('system.root').$this->config['compile'],
+                'cache' => $GLOBALS['ROOT'].$this->config['compile'],
                 'debug'=>Request::get('debug')
             ));
             $class=new Functions();
@@ -63,7 +63,7 @@ class Twig implements \ke\interfaces\Template
      */
     public function isTemplateFile($name)
     {
-        return is_file(Request::get('system.root').$this->config['path'].(isset($this->config['module']) ? $this->config['module'] : '').'/'.$name.$this->config['suffix']);
+        return is_file($GLOBALS['ROOT'].'app/'.(isset($this->config['module']) ? $this->config['module'] : '').'/view/'.$name.$this->config['suffix']);
     }
 
     /**

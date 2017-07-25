@@ -21,8 +21,9 @@ class Request
      * @param $key
      * @return mixed
      */
-    public static function get($key)
+    public static function get($key='')
     {
+        if($key=='') return self::$var;
         if(strpos($key,'.')===false){
             return isset(self::$var[$key]) ? self::$var[$key] : null;
         }else{
