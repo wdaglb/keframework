@@ -180,13 +180,15 @@ class Register
         if(Config::get('is_tpl_controller')==true){
             \view()->setConfig(['controller'=>strtolower($match['controller'])]);
         }
-        if($class->getAttr('fronts')){
-            foreach ($class->getAttr('fronts') as $method) $class->$method();
+        if(method_exists($class,'getAttr')){
+            if($class->getAttr('fronts')){
+                foreach ($class->getAttr('fronts') as $method) $class->$method();
+            }
         }
 
 
         \view()->assign('request',Request::get());
-        $return=$class->$match['action']();
+        $return=$class->{$match['action']}();
         if(is_array($return)){
             header('Content-type:application/json');
             echo json_encode($return);

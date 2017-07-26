@@ -37,6 +37,7 @@ class DB
             self::$db=Connect::boot();
             Connect::comSql($sql);
             $sth = self::$db->prepare($sql);
+            $sth->setFetchMode(\PDO::FETCH_ASSOC);
             $sth->execute($bind);
             return $sth;
         } catch (\PDOException $e) {
