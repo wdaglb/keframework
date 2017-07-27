@@ -65,6 +65,16 @@ class Controller
     }
 
     /**
+     * @param $message
+     * @param null $url
+     * @return string
+     */
+    protected function error($message,$url=null)
+    {
+        return view()->error($message,$url);
+    }
+
+    /**
      * 格式化JSON输出
      * @param  int    $code    状态码
      * @param  string $message 消息
@@ -100,16 +110,6 @@ class Controller
             header('Location:'.Route::url($url,$param));
         }
         exit;
-    }
-
-    /**
-     * @param $message
-     * @param null $url
-     * @return string
-     */
-    protected function error($message,$url=null)
-    {
-        return view()->error($message,$url);
     }
 
 }

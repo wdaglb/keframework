@@ -55,7 +55,7 @@ class Template
             exit;
         }else{
             $status=true;
-            require Request::get('system.framework').'tpl/jump.php';
+            require CORE_PATH.'tpl/jump.php';
             exit;
         }
     }
@@ -72,7 +72,7 @@ class Template
             exit;
         }else{
             $status=false;
-            require Request::get('system.framework').'tpl/jump.php';
+            require CORE_PATH.'tpl/jump.php';
             exit;
         }
     }
@@ -82,8 +82,12 @@ class Template
      * @param $name
      * @return string
      */
-    public function render($name)
+    public function render($name='')
     {
+        if($name==''){
+            $name=Request::get('action');
+        }
+
         $var=storage();
         $this->instance->assign('KE',$var);
         return $this->instance->render($name);

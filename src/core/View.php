@@ -13,7 +13,7 @@ class View
     public static function json($code,$message='',$data=[])
     {
         header('Content-type:application/json');
-        echo json_encode(['status'=>$code,'result'=>['message'=>$message,'data'=>$data]]);
+        echo json_encode(['code'=>$code,'message'=>$message,'result'=>$data]);
         exit;
     }
     public static function error($message)
@@ -22,31 +22,8 @@ class View
         if(Request::isAjax()){
             self::json(100,$message);
         }
-        require Request::get('system.framework').'tpl/msg.php';
+        require CORE_PATH.'tpl/msg.php';
         die();
-    }
-    public static function throwError(array $error)
-    {
-        if(Request::get('debug')==true){
-            $debug=true;
-        }else{
-            $debug=false;
-        }
-        $error['message']=isset($error['message']) ? $error['message'] : null;
-        $error['file']=isset($error['file']) ? $error['file'] : null;
-        $error['line']=isset($error['line']) ? $error['line'] : null;
-        Log::write(sprintf(" [ time ] %s [ 加载文件数 ] %s \r\n [ error ] %s\r\n [ file ] %s [ line ] %s",date('Y-m-d H:i:s'),count(get_included_files()),$error['message'],$error['file'],$error['line']));
-        if(Request::isAjax()){
-            header('Content-type:application/json');
-            if(!$debug){
-                $error['message']='系统异常停止';
-            }
-            echo json_encode(['status'=>false,'message'=>$error['message']]);
-            exit;
-        }
-        require Request::get('system.framework').'tpl/error.php';
-        die();
-
     }
 
 }

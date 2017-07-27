@@ -12,7 +12,7 @@ class Error
      */
     public function __construct()
     {
-        error_reporting(0);
+        error_reporting(E_ALL);
         //ini_set('display_errors',0);
         set_error_handler([$this, 'appError']);
         set_exception_handler([$this, 'appException']);

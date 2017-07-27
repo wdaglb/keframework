@@ -98,8 +98,9 @@ class Register
             exit(json_encode(['status'=>false,'message'=>'404 Not Found']));
         }
         $host=$this->get_server().$url;
+        
         header('HTTP/1.1 404 Not Found');
-        require Request::get('system.framework').'tpl/404.php';
+        require CORE_PATH.'tpl/404.php';
     }
     private function is_rule($url,$route)
     {

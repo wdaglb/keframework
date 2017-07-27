@@ -100,7 +100,7 @@ function cookie($name,$value='',$time=3600,$domain=''){
  * @return string
  */
 function session($name,$value=''){
-    //if(!isset($_SESSION)){session_start();}
+    if(!isset($_SESSION)) session_start();
     $pre=\ke\Config::get('session.prefix');
     if($value===''){
         if(isset($_SESSION[$pre.$name])){

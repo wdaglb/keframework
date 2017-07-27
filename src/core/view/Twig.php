@@ -24,17 +24,24 @@ class Twig implements \ke\interfaces\Template
     private function _init()
     {
         try{
-            $loader = new \Twig_Loader_Filesystem($GLOBALS['ROOT'].'app/'.(isset($this->config['module']) ? $this->config['module'] : '').'/view/');
+            $loader = new \Twig_Loader_Filesystem(APP_PATH.(isset($this->config['module']) ? $this->config['module'].'/' : '').'view/');
             $this->live = new \Twig_Environment($loader, array(
-                'cache' => $GLOBALS['ROOT'].$this->config['compile'],
-                'debug'=>Request::get('debug')
+                'cache' => RUNTIME_PATH.$this->config['compile'],
+                'debug'=>DEBUG
             ));
-            $class=new Functions();
-            $l=get_class_methods($class);
-            foreach ($l as $m) $this->live->addFunction(new \Twig_SimpleFunction($m,[$class,$m]));
-            $class=new Filters();
-            $l=get_class_methods($class);
-            foreach ($l as $m) $this->live->addFilter(new \Twig_SimpleFilter($m,[$class,$m]));
+            $this->live->addFunction(new \Twig_Function('url',function($uri,$params=[]){
+                return url($uri,$params);
+            }));
+            if(class_exists('app\addons\Functions')){
+                $class=new Functions();
+                $l=get_class_methods($class);
+                foreach ($l as $m) $this->live->addFunction(new \Twig_Function($m,[$class,$m]));
+            }
+            if(class_exists('app\addons\Filters')){
+                $class=new Filters();
+                $l=get_class_methods($class);
+                foreach ($l as $m) $this->live->addFilter(new \Twig_Filter($m,[$class,$m]));
+            }
         }catch (\Twig_Error $e){
             throw new Exception($e->getMessage());
         }
@@ -63,7 +70,7 @@ class Twig implements \ke\interfaces\Template
      */
     public function isTemplateFile($name)
     {
-        return is_file($GLOBALS['ROOT'].'app/'.(isset($this->config['module']) ? $this->config['module'] : '').'/view/'.$name.$this->config['suffix']);
+        return is_file(APP_PATH.(isset($this->config['module']) ? $this->config['module'].'/' : '').'view/'.$name.$this->config['suffix']);
     }
 
     /**

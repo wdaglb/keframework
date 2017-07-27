@@ -13,6 +13,7 @@ namespace ke\exception;
 
 use ke\Exception;
 use ke\Log;
+use ke\View;
 use ke\Request;
 
 /**
@@ -47,7 +48,7 @@ class ErrorException extends Exception
             'code'=>0
         ];
 
-        $debug=Request::get('debug');
+        $debug=DEBUG;
         $error['message']=isset($error['message']) ? $error['message'] : null;
         $error['file']=isset($error['file']) ? $error['file'] : null;
         $error['line']=isset($error['line']) ? $error['line'] : null;
@@ -59,10 +60,9 @@ class ErrorException extends Exception
             if(!$debug){
                 $error['message']='系统异常停止';
             }
-            echo json_encode(['status'=>false,'message'=>$error['message']]);
-            exit;
+            View::json(403,$error['message']);
         }
-        require Request::get('system.framework').'tpl/error.php';
+        require CORE_PATH.'tpl/error.php';
         die();
     }
 }
