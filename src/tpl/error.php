@@ -53,8 +53,9 @@
             </p>
             <?php foreach ($trace as $key=>$item):?>
                 <p><b>#<?php echo $key+1;?> </b>
-                    <?php echo $item['file'];?>(<?php echo $item['line'];?>)&nbsp;
-                    <span><?php echo $item['class'].$item['type'].$item['function'];?>(<?php $e=end($item['args']);?><?php foreach ($item['args'] as $tmp):?><?php echo is_string($tmp) ? '\''.$tmp.'\'' : 'Array';?><?php if($e!=$tmp):?>,<?php endif;?><?php endforeach;?>)</span>
+                <?php if(isset($item['file'])):?>
+                    <?php echo $item['file'];?>(<?php echo $item['line'];?>)&nbsp;<?php endif;?>
+                    <span><?php echo (isset($item['class'])?$item['class']:'').(isset($item['type'])?$item['type']:'').$item['function'];?>(<?php $e=end($item['args']);?><?php foreach ($item['args'] as $tmp):?><?php echo is_string($tmp) ? '\''.$tmp.'\'' : 'Array';?><?php if($e!=$tmp):?>,<?php endif;?><?php endforeach;?>)</span>
                 </p>
             <?php endforeach;?>
         </div>
