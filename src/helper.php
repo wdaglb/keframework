@@ -50,10 +50,10 @@ function storage($key='',$value='')
  * @param string $key
  * @return string
  */
-function get($key='')
+function get($key='',$value='')
 {
     if($key=='') return $_GET;
-    return isset($_GET[$key]) ? $_GET[$key] : '';
+    return isset($_GET[$key]) ? $_GET[$key] : $value;
 }
 
 /**
@@ -61,10 +61,10 @@ function get($key='')
  * @param string $key
  * @return string
  */
-function post($key='')
+function post($key='',$value='')
 {
     if($key=='') return $_POST;
-    return isset($_POST[$key]) ? $_POST[$key] : '';
+    return isset($_POST[$key]) ? $_POST[$key] : $value;
 }
 
 
@@ -103,40 +103,22 @@ function session($name,$value=''){
     if(!isset($_SESSION)) session_start();
     $pre=\ke\Config::get('session.prefix');
     if($value===''){
-        if(isset($_SESSION[$pre.$name])){
-            return $_SESSION[$pre.$name];
+        if($pre==''){
+            return isset($_SESSION[$name]) ? $_SESSION[$name] : '';
         }else{
-            return '';
+            return isset($_SESSION[$pre][$name]) ? $_SESSION[$pre][$name] : '';
         }
     }elseif(is_null($value)){
-        if(strpos($name,'.')===false){
-            if(isset($pre)){
-                unset($_SESSION[$pre][$name]);
-            }else{
-                unset($_SESSION[$name]);
-            }
+        if($pre==''){
+            unset($_SESSION[$name]);
         }else{
-            list($name1,$name2)=explode('.',$name);
-            if(isset($pre)){
-                unset($_SESSION[$pre][$name1][$name2]);
-            }else{
-                unset($_SESSION[$name1][$name2]);
-            }
+            unset($_SESSION[$pre][$name]);
         }
     }else{
-        if(strpos($name,'.')===false){
-            if(isset($pre)){
-                $_SESSION[$pre][$name]=$value;
-            }else{
-                $_SESSION[$name]=$value;
-            }
+        if($pre==''){
+            $_SESSION[$name]=$value;
         }else{
-            list($name1,$name2)=explode('.',$name);
-            if(isset($pre)){
-                $_SESSION[$pre][$name1][$name2]=$value;
-            }else{
-                $_SESSION[$name1][$name2]=$value;
-            }
+            $_SESSION[$pre][$name]=$value;
         }
     }
 }

@@ -12,7 +12,7 @@ class KE
      * 启动框架
      * @param array $option
      */
-    public static function boot($option=[])
+    public static function boot()
     {
         include(__DIR__.'/../constant.php');
         new Error();
@@ -25,11 +25,11 @@ class KE
             unset($config);
         }
 
-        if(is_file(ROOT.'app/common.php')){
-            require ROOT.'app/common.php';
+        if(is_file(APP_PATH.'common.php')){
+            require APP_PATH.'common.php';
         }
-        if(is_file(ROOT.'app/route.php')){
-            require ROOT.'app/route.php';
+        if(is_file(APP_PATH.'route.php')){
+            require APP_PATH.'route.php';
         }
 
         Route::boot();
@@ -43,7 +43,7 @@ class KE
         if($pre[0]=='app'){
             $pre[0]=APP_PATH;
             $newclass=implode('/',$pre);
-            $path=ROOT.str_replace('\\','/',$class).'.php';
+            $path=str_replace('\\','/',$newclass).'.php';
             if(is_file($path)){
                 require $path;
             }else{

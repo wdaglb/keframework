@@ -29,18 +29,18 @@ class Twig implements \ke\interfaces\Template
                 'cache' => RUNTIME_PATH.$this->config['compile'],
                 'debug'=>DEBUG
             ));
-            $this->live->addFunction(new \Twig_Function('url',function($uri,$params=[]){
+            $this->live->addFunction(new \Twig_SimpleFunction('url',function($uri,$params=[]){
                 return url($uri,$params);
             }));
             if(class_exists('app\addons\Functions')){
                 $class=new Functions();
                 $l=get_class_methods($class);
-                foreach ($l as $m) $this->live->addFunction(new \Twig_Function($m,[$class,$m]));
+                foreach ($l as $m) $this->live->addFunction(new \Twig_SimpleFunction($m,[$class,$m]));
             }
             if(class_exists('app\addons\Filters')){
                 $class=new Filters();
                 $l=get_class_methods($class);
-                foreach ($l as $m) $this->live->addFilter(new \Twig_Filter($m,[$class,$m]));
+                foreach ($l as $m) $this->live->addFilter(new \Twig_SimpleFilter($m,[$class,$m]));
             }
         }catch (\Twig_Error $e){
             throw new Exception($e->getMessage());

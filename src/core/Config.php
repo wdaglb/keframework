@@ -47,7 +47,7 @@ class Config
     public static function get($name,$values=null)
     {
         if(strstr($name,'.')===false){
-            return isset(self::$config[$name]) ? self::$config[$name] : null;
+            return isset(self::$config[$name]) ? self::$config[$name] : $values;
         }else{
             $list=explode('.',$name);
             $config=self::$config;
