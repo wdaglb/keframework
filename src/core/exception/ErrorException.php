@@ -55,13 +55,13 @@ class ErrorException extends Exception
         $error['severity']=isset($error['severity']) ? $error['severity'] : null;
         $trace=$context;
         Log::write(sprintf(" [ 发生时间 ] %s [ 加载文件数 ] %s \r\n [ error ] %s\r\n [ file ] %s [ line ] %s [ leval ] %s",date('Y-m-d H:i:s'),count(get_included_files()),$error['message'],$error['file'],$error['line'],$severity));
-        if(Request::isAjax()){
+        /*if(Request::isAjax()){
             header('Content-type:application/json');
             if(!$debug){
                 $error['message']='系统异常停止';
             }
             View::json(403,$error['message']);
-        }
+        }*/
         require CORE_PATH.'tpl/error.php';
         die();
     }

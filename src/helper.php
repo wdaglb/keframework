@@ -19,6 +19,17 @@ function view()
     return $view;
 }
 
+function m($name)
+{
+    $new=storage('model_'.$name);
+    if($new==''){
+        $class='\\app\\model\\'.ucwords($name);
+        $new=new $class();
+        storage('model_'.$name,$new);
+    }
+    return $new;
+}
+
 /**
  * 生成URL
  * @param $uri

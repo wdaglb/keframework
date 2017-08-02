@@ -8,11 +8,11 @@
     }
   ],
   "require": {
-    "php":">=7.0",
-    "twig/twig":"2.*"
+    "php":">=5.6",
+    "twig/twig":"1.*"
   },
   "require-dev": {
-    "twig/twig":"2.*"
+    "twig/twig":"1.*"
   },
   "autoload": {
     "psr-4": {

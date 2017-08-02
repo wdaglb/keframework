@@ -19,9 +19,6 @@ class View
     public static function error($message)
     {
         Log::write(' [ error ] '.$message);
-        if(Request::isAjax()){
-            self::json(100,$message);
-        }
         require CORE_PATH.'tpl/msg.php';
         die();
     }
