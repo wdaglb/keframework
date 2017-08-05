@@ -94,20 +94,13 @@ class Controller
     protected function redirect($url,$param=[])
     {
         if(Request::isAjax()){
-            header('Content-type:application/json');
-            if(!empty($param) && is_array($param)){
-                $value=array_merge(['status'=>false,'message'=>'跳转提示','url'=>$url],$param);
-            }else{
-                $value=['status'=>false,'message'=>'跳转提示','url'=>$url];
-            }
-            echo json_encode($value);
-            exit;
+            return View::json(1,'跳转',['url'=>url($url,$param)]);
         }
         if(substr($url,0,3)==='ef:'){
             $url=substr($url,3);
-            echo '<script type="text/javascript">top.location.href="'.Route::url($url,$param).'";</script>';
+            echo '<script type="text/javascript">top.location.href="'.url($url,$param).'";</script>';
         }else{
-            header('Location:'.Route::url($url,$param));
+            header('Location:'.url($url,$param));
         }
         exit;
     }

@@ -93,14 +93,10 @@ class Register
                 exit;
             }
         }
-        if(Request::isAjax()){
-            header('Content-type: application/json');
-            exit(json_encode(['status'=>false,'message'=>'404 Not Found']));
-        }
         $host=$this->get_server().$url;
         
-        header('HTTP/1.1 404 Not Found');
-        require CORE_PATH.'tpl/404.php';
+        header('status: 404 Not Found');
+        view()->miss($host);
     }
     private function is_rule($url,$route)
     {
@@ -275,7 +271,12 @@ class Register
         $uri=$item['pattern'];
         if(strpos($uri,'{')===false){
             if(!empty($param)){
-                $uri.='?'.http_build_query($param);
+                $uri.='?';
+                if(is_array($param)){
+                    $uri.=http_build_query($param);
+                }else{
+                    $uri.=$param;
+                }
             }
             return $this->get_server($item['domain']).$uri;
         }
@@ -290,7 +291,12 @@ class Register
                 }
             }
             if(!empty($param)){
-                $uri.='?'.http_build_query($param);
+                $uri.='?';
+                if(is_array($param)){
+                    $uri.=http_build_query($param);
+                }else{
+                    $uri.=$param;
+                }
             }
         }
         return $this->get_server($item['domain']).$uri;

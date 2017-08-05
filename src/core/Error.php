@@ -44,15 +44,4 @@ class Error
         // 写入日志
         //Log::write();
     }
-
-    /**
-     * 确定错误类型是否致命
-     *
-     * @param  int $type
-     * @return bool
-     */
-    protected function isFatal($type)
-    {
-        return in_array($type, [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE]);
-    }
 }

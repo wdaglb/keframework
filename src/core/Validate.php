@@ -5,7 +5,9 @@ namespace ke;
 class Validate
 {
     private $rule=[];
+    // 自定义提示消息
     private $msge=[];
+    // 自带提示消息
     private $msg=[
         'require'=>'[replace]不能为空',
         'max'=>'[replace]长度不允许超过:[max]',
@@ -80,11 +82,11 @@ class Validate
     }
     private function _between($name,$from){
         if(empty($this->from[$from])){
-            return false;
+            return true;
         }
         list($name,$tmp)=explode(':',$name);
         list($min,$max)=explode(',',$tmp);
-        if($this->from[$from]>=$min && $this->from[$from]<=$max){
+        if(mb_strlen($this->from[$from],'utf-8')>=$min && mb_strlen($this->from[$from],'utf-8')<=$max){
             return true;
         }else{
             $this->setMsg($name,$from);
@@ -109,7 +111,7 @@ class Validate
     private function _min($name,$from){
         if(empty($this->from[$from])){
             $this->setMsg($name,$from);
-            return false;
+            return true;
         }
         $tmp=explode(':',$name);
         $n=mb_strlen($this->from[$from],'utf-8');
@@ -122,6 +124,10 @@ class Validate
         }
     }
     private function _int($name,$from){
+        if(!isset($this->from[$from])){
+            $this->setMsg($name,$from);
+            return false;
+        }
         if(preg_match('/^\d*$/',$this->from[$from])){
             return true;
         }else{
@@ -130,7 +136,7 @@ class Validate
         }
     }
     private function _eng($name,$from){
-        if(empty($this->from[$from])){
+        if(!isset($this->from[$from])){
             return true;
         }
         if(preg_match('/^[A-Za-z]+$/',$this->from[$from])){
@@ -141,7 +147,7 @@ class Validate
         }
     }
     private function _engint($name,$from){
-        if(empty($this->from[$from])){
+        if(!isset($this->from[$from])){
             return true;
         }
         if(preg_match('/^[A-Za-z0-9]+$/',$this->from[$from])){
@@ -152,9 +158,8 @@ class Validate
         }
     }
     private function _email($name,$from){
-        if(empty($this->from[$from])){
-            $this->setMsg($name,$from);
-            return false;
+        if(!isset($this->from[$from])){
+            return true;
         }
         if(filter_var($this->from[$from], FILTER_VALIDATE_EMAIL)){
             $mx=explode("@",$this->from[$from]);
@@ -171,9 +176,8 @@ class Validate
         }
     }
     private function _ip($name,$from){
-        if(empty($this->from[$from])){
-            $this->setMsg($name,$from);
-            return false;
+        if(!isset($this->from[$from])){
+            return true;
         }
         if(filter_var($this->from[$from], FILTER_VALIDATE_IP,FILTER_FLAG_NO_PRIV_RANGE|FILTER_FLAG_NO_RES_RANGE)){
             return true;
@@ -183,9 +187,8 @@ class Validate
         }
     }
     private function _url($name,$from){
-        if(empty($this->from[$from])){
-            $this->setMsg($name,$from);
-            return false;
+        if(!isset($this->from[$from])){
+            return true;
         }
         if(filter_var($this->from[$from], FILTER_VALIDATE_URL)){
             return true;
@@ -220,8 +223,16 @@ class Validate
             }
         }
     }
+    private function getMessage($name)
+    {
+
+    }
     private function setMsg($name,$from)
     {
+        if(!strpos($name,':')===false){
+            $tmp=explode(':',$name);
+            $name=$tmp[0];
+        }
         if(isset($this->msge[$from][$name])){
             $error=$this->msge[$from][$name];
         }else{

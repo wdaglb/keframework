@@ -14,7 +14,7 @@ use ke\Exception;
 use ke\Request;
 use ke\Config;
 
-class Twig implements \ke\interfaces\Template
+class Twig implements \interfaces\Template
 {
     private $var=[];
 

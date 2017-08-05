@@ -42,6 +42,19 @@ class Template
         $this->instance->assign($name,$value);
     }
 
+    public function miss($host)
+    {
+        if($this->instance->isTemplateFile('404')){
+            $this->instance->assign(['host'=>$host,'date'=>date('Y-m-d H:i:s')]);
+            echo $this->instance->render('404');
+            exit;
+        }else{
+            $status=true;
+            require CORE_PATH.'tpl/404.php';
+            exit;
+        }
+    }
+
     /**
      * 成功提示
      * @param $message
