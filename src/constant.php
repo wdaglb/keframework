@@ -3,7 +3,7 @@
  * 环境常量配置
  */
 
-define('VERSION','1.2.8');
+define('VERSION','1.31');
 
 defined('ROOT') or define('ROOT', __DIR__.'/');
 define('CORE_PATH',__DIR__.'/');

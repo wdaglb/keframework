@@ -3,31 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>System Error</title>
+</head>
+<body>
     <style type="text/css">
-        html,body{
-            margin: 0;
-            padding: 0;
-        }
-        hr{
+        .exception-hr{
             border: none;
             border-top: solid 1px #dddddd;
         }
-        h1{
+        .exception-h1{
             color: #00FF66;
         }
-        h3{
+        .exception-h3{
             color: #8D8D8D;
             font-weight: 100;
             font-size: 1.0em;
         }
 
-        .main{
+        .exception-main{
             background: #2B2E37;
             margin: 0 auto;
             max-width: 1024px;
             padding: 10px;
         }
-        .code{
+        .exception-code{
             background: #333333;
             outline:none;
             height: 400px;
@@ -36,18 +34,16 @@
             padding: 5px;
             color: #fff9ec;
         }
-        .code p{
+        .exception-code p{
             margin: 5px 5px 5px 15px;
         }
     </style>
-</head>
-<body>
-    <div class="main">
-        <h1>System Error</h1>
+    <div class="exception-main">
+        <h1 class="exception-h1">System Error</h1>
         <?php if($debug):?>
-        <h3><?php echo $error['message'];?></h3>
+        <h3 class="exception-h3"><?php echo $error['message'];?></h3>
             <hr/>
-        <div class="code" contenteditable="true">
+        <div class="exception-code" contenteditable="true">
             <p><b>#0 </b>
                 <?php echo $error['file'];?>(<?php echo $error['line'];?>)
             </p>
@@ -60,9 +56,9 @@
             <?php endforeach;?>
         </div>
         <?php endif;?>
-        <hr/>
-        <h3>
-            KE-FRAMEWORK V<?php echo VERSION;?> {&nbsp;<?php echo date('Y-m-d H:i:s');?>&nbsp;}
+        <hr class="exception-hr">
+        <h3 class="exception-h3">
+            KE-Framework V<?php echo VERSION;?> {&nbsp;<?php echo date('Y-m-d H:i:s');?>&nbsp;}
         </h3>
     </div>
 </body>
