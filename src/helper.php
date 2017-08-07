@@ -19,6 +19,11 @@ function view()
     return $view;
 }
 
+/**
+ * 模型助手
+ * @param  string $name 模型名称
+ * @return model        返回模型对象
+ */
 function m($name)
 {
     $new=storage('model_'.$name);
