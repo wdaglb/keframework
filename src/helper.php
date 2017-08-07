@@ -55,7 +55,7 @@ function url($uri,$param=[])
 function storage($key='',$value='')
 {
     if($key=='') return $GLOBALS;
-    if($value===''){
+    if($value==''){
         return isset($GLOBALS[$key]) ? $GLOBALS[$key] : null;
     }else{
         return $GLOBALS[$key]=$value;

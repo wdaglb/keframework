@@ -182,6 +182,9 @@ class Register
                 foreach ($class->getAttr('fronts') as $method) $class->$method();
             }
         }
+        if(method_exists($class,'_init')){
+            $class->_init();
+        }
 
 
         \view()->assign('request',Request::get());
@@ -192,11 +195,6 @@ class Register
         }else{
             header('Content-Type: text/html; charset=utf-8');
             echo $return;
-        }
-        if(Request::get('debug') && Config::get('ke-debug')){
-            $included_files=get_included_files();
-            $runtime=microtime(true)-Request::get('start_time');
-            require Request::get('system.framework').'tpl/debug.php';
         }
     }
 
