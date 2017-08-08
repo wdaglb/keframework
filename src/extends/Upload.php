@@ -97,10 +97,15 @@ class Upload
 			$this->error='无文件上传';
 			return false;
 		}
+		$ext=$this->fileExt($this->file['name']);
 		// 检测文件类型
 		if(isset($this->rule['type'])){
-			if(!in_array($this->file['type'],$this->rule['type'])){
+			if(!in_array($ext,$this->rule['type'])){
 				$this->error='此类型不允许上传';
+				return false;
+			}
+			if(!in_array($this->file['type'],$this->mime[$ext])){
+				$this->error='非法文件类型';
 				return false;
 			}
 		}
@@ -115,7 +120,6 @@ class Upload
 			mkdir($this->savepath,0755,true);
 		}
 		$name=md5(uniqid(mt_rand(0,99999)));
-		$ext=$this->fileExt($this->file['name']);
 
 		$this->return=['path'=>$this->savepath,'name'=>$name,'ext'=>$ext];
 
@@ -130,6 +134,14 @@ class Upload
 	public function getFile()
 	{
 		return $this->return;
+	}
+	/**
+	 * 取回错误信息
+	 * @return string 错误信息
+	 */
+	public function getError()
+	{
+		return $this->error;
 	}
 
 	private function fileExt($file)
