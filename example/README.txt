@@ -14,6 +14,4 @@ extend = 扩展类库目录
 public = 对外访问目录
    .htaccess = APACHE URL重写
    index.php = 入口文件
-resources = 资源目录
-   views = 视图目录
 runtime = 框架运行的缓存/日志等文件
