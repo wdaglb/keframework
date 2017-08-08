@@ -5,9 +5,9 @@
  * Site: http://cms.iydou.cn/
  */
 
-require __DIR__.'/../vendor/autoload.php';
+define('DEBUG',true);
+define('ROOT',__DIR__.'/../');
 
-\ke\KE::boot([
-    'debug'=>true,
-    'root'=>__DIR__.'/../',
-]);
+require ROOT . 'vendor/autoload.php';
+
+ke\KE::boot();

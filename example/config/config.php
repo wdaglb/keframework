@@ -19,20 +19,10 @@ return [
     // 是否自动分配控制器目录
     'is_tpl_controller'=>true,
 
-    'csrf'=>[
-        // csrf是否开启
-        'status'=>true,
-        // csrf表单名
-        'name'=>'__ccss__',
-    ],
     // 模板引擎
     'template'=>[
-        // 默认支持twig [0.25]
+        // 默认支持twig
         'type'=>'twig',
-        // 模板目录
-        'path'=>'resources/views/',
-        // 编译目录
-        'compile'=>'runtime/compile/',
         // 模板后缀
         'suffix'=>'.htm'
     ],

@@ -10,9 +10,4 @@ namespace app\addons;
 
 class Functions
 {
-    public function url($u,array $a=[])
-    {
-        return Route::url($u,$a);
-    }
-
 }
