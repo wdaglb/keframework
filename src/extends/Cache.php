@@ -15,8 +15,10 @@ class Cache
 
 	public function __construct()
 	{
-		$config=Config::get('cache');
-		$this->config=array_merge($this->config,$config);
+		$config=Config::get('cache','');
+		if($config!=''){
+			$this->config=array_merge($this->config,$config);
+		}
 		if(empty($this->config['type'])){
 			throw new Exception('[cache:type] '.$this->config['type']);
 		}
@@ -24,8 +26,8 @@ class Cache
 			throw new Exception('[cache:timerout] '.$this->config['timerout']);
 		}
 
-		$namespace='ke\\cache\\'.ucwords($config['type']);
-		$this->class=new $namespace($config);
+		$namespace='ke\\cache\\'.ucwords($this->config['type']);
+		$this->class=new $namespace($this->config);
 	}
 
 	public function get($key,$value='')

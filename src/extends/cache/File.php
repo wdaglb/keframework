@@ -21,12 +21,12 @@ class File implements \interfaces\Cache
 	public function get($key,$value='')
 	{
 		$file=$key.'.php';
-		if(is_file($file)){
-			$content=file_get_contents($file);
+		if(is_file($this->dir.$file)){
+			$content=file_get_contents($this->dir.$file);
 			$data=unserialize($content);
 			// 过期删除
 			if($_SERVER['REQUEST_TIME']-$data['create_time']>$this->config['timerout']){
-				unlink($file);
+				unlink($this->dir.$file);
 				return $value;
 			}
 			return $data['data'];
