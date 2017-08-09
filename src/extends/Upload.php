@@ -119,7 +119,7 @@ class Upload
 		if(!is_dir($this->savepath)){
 			mkdir($this->savepath,0755,true);
 		}
-		$name=md5(uniqid(mt_rand(0,99999)));
+		$name=strtoupper(md5(uniqid(mt_rand(0,99999))));
 
 		$this->return=['path'=>$this->savepath,'name'=>$name,'ext'=>$ext];
 

@@ -57,3 +57,11 @@ function pascal_to_line($value='')
     }, $table);
     return strtolower($table);
 }
+
+function line_to_pascal($value)
+{
+    $value=preg_replace_callback('/_([a-z]+)/',function($to){
+        return ucwords($to[1]);
+    },$value);
+    return $value;
+}

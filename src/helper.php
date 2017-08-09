@@ -20,6 +20,22 @@ function view()
 }
 
 /**
+ * 命名空间助手
+ * @param  string $name 类名称
+ * @return model        返回类对象
+ */
+function n($name,$dir='\\ke\\')
+{
+    $new=storage('namespace_'.$name);
+    if($new==''){
+        $class=$dir.ucwords($name);
+        $new=new $class();
+        storage('namespace_'.$name,$new);
+    }
+    return $new;
+}
+
+/**
  * 模型助手
  * @param  string $name 模型名称
  * @return model        返回模型对象
