@@ -26,7 +26,7 @@ class Where
 					if($tmp!=''){
 						$tmp.=' '.$cond.' ';
 					}
-					$tmp.="`{$match['column']}`{$eq}:where_{$match['column']}";
+					$tmp.="`{$match['column']}` {$eq} :where_{$match['column']}";
 					$col=$match['column'];
 				}
 				if($col==''){

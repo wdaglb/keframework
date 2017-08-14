@@ -123,7 +123,7 @@ class DB
     }
 
     /**
-     * 执行软删除操作
+     * 执行硬删除操作
      * @param  string $table  数据表
      * @param  array  $where  条件
      * @return rowCount       返回受影响行
@@ -132,23 +132,77 @@ class DB
     {
         $bind=[];
         $w=new Where($where);
-        $sql=sprintf('UPDATE `:%s` SET `delete`=1 WHERE %s',$table,$w->parseWhere());
+        $sql=sprintf('DELETE FROM `:%s` WHERE %s',$table,$w->parseWhere());
         $bind=array_merge($bind,$w->parseBind());
         return self::execute($sql,$bind);
     }
 
     /**
-     * 执行硬删除操作
+     * 解析
+     * @param  string $table 表名
+     * @param  array $where 条件
+     * @param  string $option 附加信息
+     * @return data        数据集合
+     */
+    private static function parseSql($table,$where,$option=[])
+    {
+        $field='';
+        if(isset($option['field']) && is_array($option['field'])){
+            $ends=count($option['field'])-1;
+            foreach ($field as $key => $value) {
+                $field.='`'.$value.'`';
+                if($key!=$ends){
+                    $field.=',';
+                }
+            }
+        }else{
+            $field='*';
+        }
+        $limit='';
+        if(isset($option['limit']) && is_array($option['limit'])){
+            $limit=' LIMIT '.$option['limit'][0].','.$option['limit'][1];
+        }
+        $order='';
+        if(isset($option['order']) && is_array($option['order'])){
+            $c=count($option['order'])-1;
+            $i=0;
+            $order='ORDER BY ';
+            foreach ($option['order'] as $key=>$value) {
+                $i++;
+                $order.="`{$key}` {$value}";
+                if($c==$i){
+                    $order.=',';
+                }
+            }
+
+        }
+        $w=new Where($where);
+
+        $sql=sprintf('SELECT '.$field.' FROM `:%s` WHERE %s %s %s',$table,$w->parseWhere(),$limit,$order);
+        return self::query($sql,$w->parseBind());
+    }
+
+    /**
+     * 获取一行数据
      * @param  string $table  数据表
      * @param  array  $where  条件
-     * @return rowCount       返回受影响行
+     * @return rowCount       返回数据行
      */
-    public static function destroy($table,$where)
+    public static function first($table,$where,$option=[])
     {
-        $bind=[];
-        $w=new Where($where);
-        $sql=sprintf('DELETE FROM `:%s` WHERE %s',$table,$w->parseWhere());
-        $bind=array_merge($bind,$w->parseBind());
-        return self::execute($sql,$bind);
+        $sql=self::parseSql($table,$where,$option);
+        return $sql->fetch();
+    }
+
+    /**
+     * 获取多行数据
+     * @param  string $table  数据表
+     * @param  array  $where  条件
+     * @return rowCount       返回数据集
+     */
+    public static function all($table,$where,$option=[])
+    {
+        $sql=self::parseSql($table,$where,$option);
+        return $sql->fetchAll();
     }
 }
