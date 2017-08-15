@@ -76,6 +76,7 @@ class Register
             list($url,$param)=explode('?',$url);
             parse_str($param,$_GET);
         }
+
         $host=get_domain();
         $route=Lists::get();
         foreach ($route as $item){
@@ -146,7 +147,8 @@ class Register
         if($domain==''){
             $domain=get_domain();
         }
-        return $prefix.$domain.($c?'':$_SERVER['SCRIPT_NAME']);
+        //return $prefix.$domain.($c?'':$_SERVER['SCRIPT_NAME']);
+        return $prefix.$domain.$c;
     }
 
     /**

@@ -22,7 +22,10 @@ class Route
         if(!is_object(self::$ds)){
             self::$ds=new Register();
         }
-        self::$ds->match(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
+        if(!isset($_SERVER['PATH_INFO'])){
+            throw new Exception('PATH_INFO is empty');
+        }
+        self::$ds->match(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/');
     }
 
     /**
