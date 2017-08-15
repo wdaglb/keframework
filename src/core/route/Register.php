@@ -268,6 +268,7 @@ class Register
 
     private function return_rule($item,$param=[])
     {
+        $script_name=Config::get('is_simple_url',false) ? '' : '/index.php';
         $uri=$item['pattern'];
         if(strpos($uri,'{')===false){
             if(!empty($param)){
@@ -278,7 +279,7 @@ class Register
                     $uri.=$param;
                 }
             }
-            return $this->get_server($item['domain']).$uri;
+            return $this->get_server($item['domain']).$script_name.$uri;
         }
 
         if(preg_match_all('/\{(\w+)\?*\}/',$uri,$matchs,PREG_SET_ORDER)){
@@ -299,7 +300,7 @@ class Register
                 }
             }
         }
-        return $this->get_server($item['domain']).$uri;
+        return $this->get_server($item['domain']).$script_name.$uri;
 
 
     }
