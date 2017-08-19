@@ -29,8 +29,12 @@ class Twig implements \interfaces\Template
                 'cache' => RUNTIME_PATH.$this->config['compile'],
                 'debug'=>DEBUG
             ));
+            $this->var['__WEB_PATH__']=__WEB_PATH__;
             $this->live->addFunction(new \Twig_SimpleFunction('url',function($uri,$params=[]){
                 return url($uri,$params);
+            }));
+            $this->live->addFunction(new \Twig_SimpleFunction('assets',function($name){
+                return __WEB_PATH__.$name;
             }));
             if(class_exists('app\addons\Functions')){
                 $class=new Functions();

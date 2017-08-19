@@ -9,30 +9,33 @@
  * 视图
  * @return \ke\Template|mixed
  */
-function view()
-{
-    $view=\ke\Request::get('view');
-    if(is_null($view)){
-        $view=new \ke\Template();
-        \ke\Request::set('view',$view);
+if(!function_exists('view')){
+    function view()
+    {
+        $view=\ke\Request::get('view');
+        if(is_null($view)){
+            $view=new \ke\Template();
+            \ke\Request::set('view',$view);
+        }
+        return $view;
     }
-    return $view;
 }
-
 /**
  * 命名空间助手
  * @param  string $name 类名称
  * @return model        返回类对象
  */
-function n($name,$dir='\\ke\\')
-{
-    $new=storage('namespace_'.$name);
-    if($new==''){
-        $class=$dir.ucwords($name);
-        $new=new $class();
-        storage('namespace_'.$name,$new);
+if(!function_exists('n')){
+    function n($name,$dir='\\ke\\')
+    {
+        $new=storage('namespace_'.$name);
+        if($new==''){
+            $class=$dir.ucwords($name);
+            $new=new $class();
+            storage('namespace_'.$name,$new);
+        }
+        return $new;
     }
-    return $new;
 }
 
 /**
@@ -40,15 +43,17 @@ function n($name,$dir='\\ke\\')
  * @param  string $name 模型名称
  * @return model        返回模型对象
  */
-function m($name)
-{
-    $new=storage('model_'.$name);
-    if($new==''){
-        $class='\\app\\model\\'.ucwords($name);
-        $new=new $class();
-        storage('model_'.$name,$new);
+if(!function_exists('m')){
+    function m($name)
+    {
+        $new=storage('model_'.$name);
+        if($new==''){
+            $class='\\app\\model\\'.ucwords($name);
+            $new=new $class();
+            storage('model_'.$name,$new);
+        }
+        return $new;
     }
-    return $new;
 }
 
 /**
@@ -57,9 +62,11 @@ function m($name)
  * @param $param
  * @return mixed|string
  */
-function url($uri,$param=[])
-{
-    return \ke\Route::url($uri,$param);
+if(!function_exists('url')){
+    function url($uri,$param=[])
+    {
+        return \ke\Route::url($uri,$param);
+    }
 }
 
 /**
@@ -68,13 +75,15 @@ function url($uri,$param=[])
  * @param  string $value 值
  * @return mixed
  */
-function storage($key='',$value='')
-{
-    if($key=='') return $GLOBALS;
-    if($value==''){
-        return isset($GLOBALS[$key]) ? $GLOBALS[$key] : null;
-    }else{
-        return $GLOBALS[$key]=$value;
+if(!function_exists('storage')){
+    function storage($key='',$value='')
+    {
+        if($key=='') return $GLOBALS;
+        if($value==''){
+            return isset($GLOBALS[$key]) ? $GLOBALS[$key] : null;
+        }else{
+            return $GLOBALS[$key]=$value;
+        }
     }
 }
 /**
@@ -82,10 +91,12 @@ function storage($key='',$value='')
  * @param string $key
  * @return string
  */
-function get($key='',$value='')
-{
-    if($key=='') return $_GET;
-    return isset($_GET[$key]) ? $_GET[$key] : $value;
+if(!function_exists('get')){
+    function get($key='',$value='')
+    {
+        if($key=='') return $_GET;
+        return isset($_GET[$key]) ? $_GET[$key] : $value;
+    }
 }
 
 /**
@@ -93,10 +104,12 @@ function get($key='',$value='')
  * @param string $key
  * @return string
  */
-function post($key='',$value='')
-{
-    if($key=='') return $_POST;
-    return isset($_POST[$key]) ? $_POST[$key] : $value;
+if(!function_exists('post')){
+    function post($key='',$value='')
+    {
+        if($key=='') return $_POST;
+        return isset($_POST[$key]) ? $_POST[$key] : $value;
+    }
 }
 
 
@@ -108,20 +121,22 @@ function post($key='',$value='')
  * @param string $domain
  * @return string
  */
-function cookie($name,$value='',$time=3600,$domain=''){
-    $pre=ke\Config::get('cookie.prefix');
-    if($value===''){
-        if(isset($_COOKIE[$pre.$name])){
-            return $_COOKIE[$pre.$name];
+if(!function_exists('cookie')){
+    function cookie($name,$value='',$time=3600,$domain=''){
+        $pre=ke\Config::get('cookie.prefix');
+        if($value===''){
+            if(isset($_COOKIE[$pre.$name])){
+                return $_COOKIE[$pre.$name];
+            }else{
+                return '';
+            }
+        }elseif(is_null($value)){
+            setcookie($pre.$name,null,time()-$time,'/',$domain);
+            unset($_COOKIE[$pre.$name]);
         }else{
-            return '';
+            setcookie($pre.$name,$value,time()+$time,'/',$domain);
+            $_COOKIE[$pre.$name]=$value;
         }
-    }elseif(is_null($value)){
-        setcookie($pre.$name,null,time()-$time,'/',$domain);
-        unset($_COOKIE[$pre.$name]);
-    }else{
-        setcookie($pre.$name,$value,time()+$time,'/',$domain);
-        $_COOKIE[$pre.$name]=$value;
     }
 }
 
@@ -131,26 +146,28 @@ function cookie($name,$value='',$time=3600,$domain=''){
  * @param string $value
  * @return string
  */
-function session($name,$value=''){
-    if(!isset($_SESSION)) session_start();
-    $pre=\ke\Config::get('session.prefix');
-    if($value===''){
-        if($pre==''){
-            return isset($_SESSION[$name]) ? $_SESSION[$name] : '';
+if(!function_exists('session')){
+    function session($name,$value=''){
+        if(!isset($_SESSION)) session_start();
+        $pre=\ke\Config::get('session.prefix');
+        if($value===''){
+            if($pre==''){
+                return isset($_SESSION[$name]) ? $_SESSION[$name] : '';
+            }else{
+                return isset($_SESSION[$pre][$name]) ? $_SESSION[$pre][$name] : '';
+            }
+        }elseif(is_null($value)){
+            if($pre==''){
+                unset($_SESSION[$name]);
+            }else{
+                unset($_SESSION[$pre][$name]);
+            }
         }else{
-            return isset($_SESSION[$pre][$name]) ? $_SESSION[$pre][$name] : '';
-        }
-    }elseif(is_null($value)){
-        if($pre==''){
-            unset($_SESSION[$name]);
-        }else{
-            unset($_SESSION[$pre][$name]);
-        }
-    }else{
-        if($pre==''){
-            $_SESSION[$name]=$value;
-        }else{
-            $_SESSION[$pre][$name]=$value;
+            if($pre==''){
+                $_SESSION[$name]=$value;
+            }else{
+                $_SESSION[$pre][$name]=$value;
+            }
         }
     }
 }

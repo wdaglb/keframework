@@ -22,6 +22,14 @@ class KE
         if(is_file(CONF_PATH.'config.php')){
             $config=require CONF_PATH.'config.php';
             Config::set($config);
+
+            if(isset($config['loader_conf']) && is_array($config['loader_conf'])){
+                foreach ($config['loader_conf'] as $name) {
+                    if(is_file(CONF_PATH.$name.'.php')){
+                        Config::set($name,require(CONF_PATH.$name.'.php'));
+                    }
+                }
+            }
             unset($config);
         }
 

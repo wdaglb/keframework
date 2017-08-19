@@ -29,9 +29,18 @@ class Register
         $this->group=$option;
     }
 
-    public function add($name,$bind,$method='GET',$domain='')
+    /**
+     * 添加路由规则
+     * @param string $name   规则
+     * @param string $bind   绑定信息
+     * @param string $method 请求类型
+     * @param string $domain 限定域名
+     * @param string $suffix URL后缀
+     */
+    public function add($name,$bind,$method='GET',$domain='',$suffix='')
     {
-        $prefix=isset($this->group['prefix']) ? $this->group['prefix'].'/' : '';
+        $prefix=isset($this->group['prefix']) ? $this->group['prefix'] : '';
+        $suffix=isset($this->group['suffix']) ? $this->group['suffix'] : '';
         $namespace=isset($this->group['namespace']) ? $this->group['namespace'].'/' : '';
         if(is_array($bind)){
             $as=$bind['as'];
@@ -41,7 +50,7 @@ class Register
         }
         $this->index=Lists::set([
             'name'=>$as,
-            'pattern'=>$prefix.$name,
+            'pattern'=>$prefix.$name.$suffix,
             'bind'=>$namespace.$bind,
             'method'=>$method,
             'domain'=>($domain=='' ? (isset($this->group['domain']) ? $this->group['domain'] : '') : $domain),
@@ -76,7 +85,6 @@ class Register
             list($url,$param)=explode('?',$url);
             parse_str($param,$_GET);
         }
-
         $host=get_domain();
         $route=Lists::get();
         foreach ($route as $item){
@@ -147,8 +155,7 @@ class Register
         if($domain==''){
             $domain=get_domain();
         }
-        //return $prefix.$domain.($c?'':$_SERVER['SCRIPT_NAME']);
-        return $prefix.$domain.$c;
+        return $prefix.$domain;
     }
 
     /**
@@ -268,8 +275,8 @@ class Register
 
     private function return_rule($item,$param=[])
     {
-        $script_name=Config::get('is_simple_url',false) ? '' : '/index.php';
         $uri=$item['pattern'];
+        $script_name=(Config::get('is_simple_url',false) ? '' : $_SERVER['SCRIPT_NAME']);
         if(strpos($uri,'{')===false){
             if(!empty($param)){
                 $uri.='?';
