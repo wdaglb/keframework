@@ -100,7 +100,7 @@ class DB
      * @param  array $data    新数据
      * @return rowCount       返回受影响行
      */
-    public static function update($table,$where,$data)
+    public static function update($table,$where=[],$data)
     {
         if(empty($data)) throw new Exception("DB update data is null");
         
@@ -116,9 +116,16 @@ class DB
             }
             $n++;
         }
-        $w=new Where($where);
-        $sql=sprintf('UPDATE `:%s` SET %s WHERE %s',$table,$column,$w->parseWhere());
-        $bind=array_merge($bind,$w->parseBind());
+        if(empty($where)){
+            $where='';
+            $bind=[];
+        }else{
+            $w=new Where($where);
+            $where=' WHERE '.$w->parseWhere();
+            $bind=$w->parseBind();
+        }
+        $sql=sprintf('UPDATE `:%s` SET %s %s',$table,$column,$where);
+        $bind=array_merge($bind,$bind);
         return self::execute($sql,$bind);
     }
 
@@ -128,12 +135,19 @@ class DB
      * @param  array  $where  条件
      * @return rowCount       返回受影响行
      */
-    public static function delete($table,$where)
+    public static function delete($table,$where=[])
     {
         $bind=[];
-        $w=new Where($where);
-        $sql=sprintf('DELETE FROM `:%s` WHERE %s',$table,$w->parseWhere());
-        $bind=array_merge($bind,$w->parseBind());
+        if(empty($where)){
+            $where='';
+            $bind=[];
+        }else{
+            $w=new Where($where);
+            $where=' WHERE '.$w->parseWhere();
+            $bind=$w->parseBind();
+        }
+        $sql=sprintf('DELETE FROM `:%s` %s',$table,$where);
+        $bind=array_merge($bind,$bind);
         return self::execute($sql,$bind);
     }
 
@@ -176,10 +190,17 @@ class DB
             }
 
         }
-        $w=new Where($where);
+        if(empty($where)){
+            $where='';
+            $bind=[];
+        }else{
+            $w=new Where($where);
+            $where=' WHERE '.$w->parseWhere();
+            $bind=$w->parseBind();
+        }
 
-        $sql=sprintf('SELECT '.$field.' FROM `:%s` WHERE %s %s %s',$table,$w->parseWhere(),$limit,$order);
-        return self::query($sql,$w->parseBind());
+        $sql=sprintf('SELECT '.$field.' FROM `:%s` %s %s %s',$table,$where,$limit,$order);
+        return self::query($sql,$bind);
     }
 
     /**
@@ -188,7 +209,7 @@ class DB
      * @param  array  $where  条件
      * @return rowCount       返回数据行
      */
-    public static function first($table,$where,$option=[])
+    public static function first($table,$where=[],$option=[])
     {
         $sql=self::parseSql($table,$where,$option);
         return $sql->fetch();
@@ -200,9 +221,43 @@ class DB
      * @param  array  $where  条件
      * @return rowCount       返回数据集
      */
-    public static function all($table,$where,$option=[])
+    public static function all($table,$where=[],$option=[])
     {
         $sql=self::parseSql($table,$where,$option);
         return $sql->fetchAll();
+    }
+
+    public static function count($table,$where=[])
+    {
+        $limit='';
+        if(isset($option['limit']) && is_array($option['limit'])){
+            $limit=' LIMIT '.$option['limit'][0].','.$option['limit'][1];
+        }
+        $order='';
+        if(isset($option['order']) && is_array($option['order'])){
+            $c=count($option['order'])-1;
+            $i=0;
+            $order='ORDER BY ';
+            foreach ($option['order'] as $key=>$value) {
+                $i++;
+                $order.="`{$key}` {$value}";
+                if($c==$i){
+                    $order.=',';
+                }
+            }
+
+        }
+        if(empty($where)){
+            $where='';
+            $bind=[];
+        }else{
+            $w=new Where($where);
+            $where=' WHERE '.$w->parseWhere();
+            $bind=$w->parseBind();
+        }
+
+        $sql=sprintf('SELECT count(*) FROM `:%s` %s %s %s',$table,$where,$limit,$order);
+        $sql=self::query($sql,$bind);
+        return $sql->fetchColumn();
     }
 }
