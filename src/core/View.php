@@ -13,7 +13,11 @@ class View
     public static function json($code,$message='',$data=[])
     {
         header('Content-type:application/json');
-        echo json_encode(['code'=>$code,'message'=>$message,'result'=>$data]);
+        if(is_array($code)){
+            echo json_encode($code);
+        }else{
+            echo json_encode(['code'=>$code,'message'=>$message,'result'=>$data]);
+        }
         exit;
     }
     public static function error($message)

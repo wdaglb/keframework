@@ -34,7 +34,11 @@ class Twig implements \interfaces\Template
                 return url($uri,$params);
             }));
             $this->live->addFunction(new \Twig_SimpleFunction('assets',function($name){
-                return __WEB_PATH__.$name;
+                $src=__WEB_PATH__.$name;
+                if(DEBUG){
+                    $src.='?v='.$_SERVER['REQUEST_TIME'];
+                }
+                return $src;
             }));
             if(class_exists('app\addons\Functions')){
                 $class=new Functions();

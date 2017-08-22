@@ -20,6 +20,17 @@ if(!function_exists('view')){
         return $view;
     }
 }
+if(!function_exists('config')){
+    function config($key,$value='')
+    {
+        if($value==''){
+            return \ke\Config::get($key,$value);
+        }else{
+            return \ke\Config::set($key,$value);
+        }
+
+    }
+}
 /**
  * 命名空间助手
  * @param  string $name 类名称

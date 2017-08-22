@@ -1,4 +1,7 @@
 <?php
+/**
+
+ */
 namespace ke;
 
 class Upload
@@ -121,7 +124,7 @@ class Upload
 		}
 		$name=strtoupper(md5(uniqid(mt_rand(0,99999))));
 
-		$this->return=['path'=>$this->savepath,'name'=>$name,'ext'=>$ext];
+		$this->return=['path'=>$this->savepath,'name'=>$name,'ext'=>$ext,'yum'=>$this->file['name'],'mime'=>$this->file['type']];
 
 		move_uploaded_file($this->file['tmp_name'],$this->savepath.$name.'.'.$ext);
 		return true;
