@@ -118,11 +118,10 @@ class DB
         }
         if(empty($where)){
             $where='';
-            $bind=[];
         }else{
             $w=new Where($where);
             $where=' WHERE '.$w->parseWhere();
-            $bind=$w->parseBind();
+            $bind=array_merge($bind,$w->parseBind());
         }
         $sql=sprintf('UPDATE `:%s` SET %s %s',$table,$column,$where);
         $bind=array_merge($bind,$bind);
@@ -140,11 +139,10 @@ class DB
         $bind=[];
         if(empty($where)){
             $where='';
-            $bind=[];
         }else{
             $w=new Where($where);
             $where=' WHERE '.$w->parseWhere();
-            $bind=$w->parseBind();
+            $bind=array_merge($bind,$w->parseBind());
         }
         $sql=sprintf('DELETE FROM `:%s` %s',$table,$where);
         $bind=array_merge($bind,$bind);
@@ -190,13 +188,13 @@ class DB
             }
 
         }
+        $bind=[];
         if(empty($where)){
             $where='';
-            $bind=[];
         }else{
             $w=new Where($where);
             $where=' WHERE '.$w->parseWhere();
-            $bind=$w->parseBind();
+            $bind=array_merge($bind,$w->parseBind());
         }
 
         $sql=sprintf('SELECT '.$field.' FROM `:%s` %s %s %s',$table,$where,$limit,$order);
