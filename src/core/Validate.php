@@ -57,6 +57,40 @@ class Validate
         }
         return $r;
     }
+
+    /**
+     * 清空
+     */
+    public function clear()
+    {
+        $this->rule=[];
+        $this->msge=[];
+    }
+
+    /**
+     * 只验证一条信息
+     * @param $value
+     * @param $rule
+     * @param array $message
+     * @return bool
+     */
+    public function one($value,$rule,$message=[])
+    {
+        $this->clear();
+        $this->from['one']=$value;
+        $value=strtolower($rule);
+        if(strpos($value, '|')===false){
+            $rule=[$value];
+        }else{
+            $tmp=explode('|',$value);
+            $rule=$tmp;
+        }
+        foreach ($message as $key=>$value){
+            $keys=strtolower($key);
+            $this->msge['one'][$keys]=$value;
+        }
+        return $this->checks('one',$rule);
+    }
     private function checks($name,$params){
         foreach ($params as $value){
             if(strpos($value,':')===false){
@@ -222,10 +256,6 @@ class Validate
                 return true;
             }
         }
-    }
-    private function getMessage($name)
-    {
-
     }
     private function setMsg($name,$from)
     {
