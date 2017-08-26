@@ -5,7 +5,9 @@
 
 define('VERSION','1.36');
 
-defined('ROOT') or define('ROOT', __DIR__.'/');
+if(!defined('ROOT')){
+    exit('ROOT is empty');
+}
 defined('CORE_PATH') or define('CORE_PATH', __DIR__.'/');
 
 defined('DEBUG') or define('DEBUG',false);
