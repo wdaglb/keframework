@@ -5,7 +5,7 @@
  * Site: http://cms.iydou.cn/
  */
 
-namespace app\controllers;
+namespace app\controller;
 
 
 class IndexController extends Controller
