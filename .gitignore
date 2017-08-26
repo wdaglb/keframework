@@ -1,6 +1,2 @@
 .git
 /.idea/
-/runtime
-/vendor
-/composer.lock
-/config/database.php
