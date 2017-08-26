@@ -78,7 +78,12 @@ class Twig implements \interfaces\Template
      */
     public function isTemplateFile($name)
     {
-        return is_file(APP_PATH.(isset($this->config['module']) ? $this->config['module'].'/' : '').'view/'.$name.$this->config['suffix']);
+        return is_file(APP_PATH.$this->getFilePath($name));
+    }
+
+    private function getFilePath($name)
+    {
+        return (isset($this->config['controller']) ? $this->config['controller'].'/' : '').$name.$this->config['suffix'];
     }
 
     /**
@@ -89,9 +94,8 @@ class Twig implements \interfaces\Template
     public function render($name='')
     {
         $this->_init();
-        if($name=='') $name=Config::get('is_tpl_action') ? Request::get('action') : $name;
         try{
-            return $this->live->render((isset($this->config['controller']) ? $this->config['controller'].'/' : '').$name.$this->config['suffix'],$this->var);
+            return $this->live->render($this->getFilePath($name),$this->var);
         }catch (\Twig_Error_Loader $e){
             throw new Exception($e->getMessage());
         }
