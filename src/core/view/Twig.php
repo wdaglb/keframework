@@ -21,10 +21,14 @@ class Twig implements \interfaces\Template
     private $config=[];
 
     private $live;
+
+    private $path='';
     private function _init()
     {
+        $this->path=APP_PATH.(isset($this->config['module']) ? $this->config['module'].'/' : '').'view/';
+        if(is_object($this->live)) return $this->live;
         try{
-            $loader = new \Twig_Loader_Filesystem(APP_PATH.(isset($this->config['module']) ? $this->config['module'].'/' : '').'view/');
+            $loader = new \Twig_Loader_Filesystem($this->path);
             $this->live = new \Twig_Environment($loader, array(
                 'cache' => RUNTIME_PATH.$this->config['compile'],
                 'debug'=>DEBUG
@@ -78,12 +82,18 @@ class Twig implements \interfaces\Template
      */
     public function isTemplateFile($name)
     {
-        return is_file(APP_PATH.$this->getFilePath($name));
+        $this->_init();
+        return is_file($this->path.$this->getFilePath($name));
     }
 
     private function getFilePath($name)
     {
-        return (isset($this->config['controller']) ? $this->config['controller'].'/' : '').$name.$this->config['suffix'];
+        if($name==''){
+            $pt=$this->config['controller'].'/'.$this->config['action'];
+        }else{
+            $pt=$name;
+        }
+        return $pt.$this->config['suffix'];
     }
 
     /**
