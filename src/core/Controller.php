@@ -83,7 +83,31 @@ class Controller
      */
     protected function json($code,$message='',$data=[])
     {
-        View::json($code,$message,$data);
+        return view()->json($code,$message,$data);
+    }
+
+    /**
+     * 判别ajax返回-成功
+     * @param $message
+     * @param string $url
+     * @param array $data
+     * @return string|void
+     */
+    protected function aSuccess($message,$url='',$data=[])
+    {
+        return view()->aSuccess($message,$url,$data);
+    }
+
+    /**
+     * 判别ajax返回-失败
+     * @param $message
+     * @param string $url
+     * @param array $data
+     * @return string|void
+     */
+    protected function aError($message,$url='',$data=[])
+    {
+        return view()->aError($message,$url,$data);
     }
 
     /**

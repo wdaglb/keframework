@@ -65,6 +65,7 @@ class Template
      * @return string
      */
     public function success($message,$url=null,$wait=3){
+        $url=is_null($url) ? 'javascript:history.back(-1)' : $url;
         if($this->instance->isTemplateFile('success')){
             $this->instance->assign(['status'=>0,'message'=>$message,'url'=>$url,'wait'=>$wait]);
             echo $this->instance->render('success');
@@ -82,6 +83,7 @@ class Template
      * @return string
      */
     public function error($message,$url=null,$wait=3){
+        $url=is_null($url) ? 'javascript:history.back(-1)' : $url;
         if($this->instance->isTemplateFile('error')){
             $this->instance->assign(['status'=>false,'message'=>$message,'url'=>$url,'wait'=>$wait]);
             echo $this->instance->render('error');
@@ -90,6 +92,57 @@ class Template
             $status=false;
             require CORE_PATH.'tpl/jump.php';
             exit;
+        }
+    }
+
+    /**
+     * json数据
+     * @param $code
+     * @param string $message
+     * @param array $data
+     */
+    public function json($code,$message='',$data=[])
+    {
+        header('Content-type:application/json');
+        if(is_array($code)){
+            echo json_encode($code);
+        }else{
+            echo json_encode(['code'=>$code,'message'=>$message,'result'=>$data]);
+        }
+        exit;
+    }
+
+    /**
+     * 判别ajax返回-成功
+     * @param $message
+     * @param string $url
+     * @param array $data
+     * @return string|void
+     */
+    public function aSuccess($message,$url='',$data=[])
+    {
+        $url=is_null($url) ? 'javascript:history.back(-1)' : $url;
+        if(Request::isAjax() ){
+            return $this->json(0,$message,array_merge($data,['url'=>$url]));
+        }else{
+            return $this->success($message,$url);
+        }
+    }
+
+    /**
+     * 判别ajax返回-失败
+     * @param $message
+     * @param string $url
+     * @param array $data
+     * @return string|void
+     */
+    public function aError($message,$url='',$data=[])
+    {
+        $url=is_null($url) ? 'javascript:history.back(-1)' : $url;
+        if(Request::isAjax() ){
+            return $this->json(1,$message,array_merge($data,['url'=>$url]));
+        }else{
+            return $this->error($message,$url);
         }
     }
 
