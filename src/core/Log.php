@@ -12,9 +12,9 @@ class Log
 {
     public static function write($msg)
     {
-        $dir=RUNTIME_PATH.'log/'.date('Ymd',$_SERVER['REQUEST_TIME']).'/';
+        $dir=RUNTIME_PATH.'log/';
         if(!is_dir($dir)) mkdir($dir,0777,true);
-        $filename=date('H').'.log';
+        $filename=date('Ymd',$_SERVER['REQUEST_TIME']).'.log';
         file_put_contents($dir.$filename,"===========================================\r\n\r\n".$msg."\r\n",FILE_APPEND);
     }
 

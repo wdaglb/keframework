@@ -16,6 +16,8 @@ class Template
 {
     private $instance;
 
+    private $require=[];
+
     public function __construct()
     {
         $c=Config::get('template');
@@ -23,13 +25,14 @@ class Template
         //if(!isset($c['path'])) throw new Exception('请设置template目录[path]');
         if(!isset($c['compile'])) throw new Exception('请设置template编译目录[compile]');
         if(!isset($c['suffix'])) throw new Exception('请设置template后缀名[suffix]');
+        $this->require=[
+            'module'=>Request::get('module'),
+            'controller'=>Request::get('controller'),
+            'action'=>Request::get('action'),
+        ];
         $type='ke\\view\\'.ucwords($c['type']);
         $this->instance=new $type($c);
-    }
-
-    public function setConfig(array $option)
-    {
-        $this->instance->setConfig($option);
+        $this->instance->setPath(APP_PATH.(isset($this->require['module']) ? $this->require['module'].'/' : '').'view/');
     }
 
     /**
@@ -97,10 +100,15 @@ class Template
      */
     public function render($name='')
     {
-        if($name==''){
-            $name=Request::get('action');
+        if(substr($name,0,1)==='@'){
+            $name=substr($name,1);
+        }else{
+            if($name===''){
+                $name=Request::get('controller').'/'.Request::get('action');
+            }else{
+                $name=Request::get('controller').'/'.$name;
+            }
         }
-
         $var=storage();
         $this->instance->assign('KE',$var);
         return $this->instance->render($name);

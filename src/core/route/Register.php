@@ -180,12 +180,6 @@ class Register
         Request::set('controller',strtolower($match['controller']));
         Request::set('action',pascal_to_line($match['action']));
 
-        if(Config::get('is_tpl_module')==true){
-            \view()->setConfig(['module'=>$match['module']]);
-        }
-        if(Config::get('is_tpl_controller')==true){
-            \view()->setConfig(['controller'=>strtolower($match['controller'])]);
-        }
         if(method_exists($class,'getAttr')){
             if($class->getAttr('fronts')){
                 foreach ($class->getAttr('fronts') as $method) $class->$method();

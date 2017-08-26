@@ -23,9 +23,13 @@ class Twig implements \interfaces\Template
     private $live;
 
     private $path='';
+    public function setPath($path)
+    {
+        $this->path=$path;
+    }
+
     private function _init()
     {
-        $this->path=APP_PATH.(isset($this->config['module']) ? $this->config['module'].'/' : '').'view/';
         if(is_object($this->live)) return $this->live;
         try{
             $loader = new \Twig_Loader_Filesystem($this->path);
@@ -82,20 +86,8 @@ class Twig implements \interfaces\Template
      */
     public function isTemplateFile($name)
     {
-        $this->_init();
-        return is_file($this->path.$this->getFilePath($name));
+        return is_file($this->path.$name);
     }
-
-    private function getFilePath($name)
-    {
-        if($name==''){
-            $pt=$this->config['controller'].'/'.$this->config['action'];
-        }else{
-            $pt=$name;
-        }
-        return $pt.$this->config['suffix'];
-    }
-
     /**
      * 页面渲染
      * @param $name
@@ -105,7 +97,7 @@ class Twig implements \interfaces\Template
     {
         $this->_init();
         try{
-            return $this->live->render($this->getFilePath($name),$this->var);
+            return $this->live->render($name.$this->config['suffix'],$this->var);
         }catch (\Twig_Error_Loader $e){
             throw new Exception($e->getMessage());
         }
