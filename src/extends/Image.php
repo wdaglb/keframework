@@ -30,11 +30,11 @@ class Image
         $col = imagecolorallocate ($image,0,0,0);
         //指定字体内容
         $fonts=CORE_PATH.'extends/font/fz.ttf';
-        $rect=imagettfbbox(24,0,$fonts,$content);
+        $rect=imagettfbbox(18,0,$fonts,$content);
         $w=$rect[2]-$rect[0];
 
         //给图片添加文字
-        imagettftext($image,24,0,$info[0]/2-$w/2,$info[1],$col,$fonts,$content);
+        imagettftext($image,18,0,$info[0]/2-$w/2,$info[1],$col,$fonts,$content);
         //指定输入类型
         header('Content-type:'.$info['mime']);
         //动态的输出图片到浏览器中

@@ -67,7 +67,7 @@ class Template
     public function success($message,$url=null,$wait=3){
         $url=is_null($url) ? 'javascript:history.back(-1)' : $url;
         if($this->instance->isTemplateFile('success')){
-            $this->instance->assign(['status'=>0,'message'=>$message,'url'=>$url,'wait'=>$wait]);
+            $this->instance->assign(['status'=>0,'message'=>$message,'url'=>url($url),'wait'=>$wait]);
             echo $this->instance->render('success');
             exit;
         }else{
@@ -85,7 +85,7 @@ class Template
     public function error($message,$url=null,$wait=3){
         $url=is_null($url) ? 'javascript:history.back(-1)' : $url;
         if($this->instance->isTemplateFile('error')){
-            $this->instance->assign(['status'=>false,'message'=>$message,'url'=>$url,'wait'=>$wait]);
+            $this->instance->assign(['status'=>false,'message'=>$message,'url'=>url($url),'wait'=>$wait]);
             echo $this->instance->render('error');
             exit;
         }else{
@@ -123,7 +123,7 @@ class Template
     {
         $url=is_null($url) ? 'javascript:history.back(-1)' : $url;
         if(Request::isAjax() ){
-            return $this->json(0,$message,array_merge($data,['url'=>$url]));
+            return $this->json(0,$message,array_merge($data,['url'=>url($url)]));
         }else{
             return $this->success($message,$url);
         }
