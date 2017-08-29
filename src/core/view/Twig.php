@@ -41,9 +41,9 @@ class Twig implements \interfaces\Template
             $this->live->addFunction(new \Twig_SimpleFunction('url',function($uri,$params=[]){
                 return url($uri,$params);
             }));
-            $this->live->addFunction(new \Twig_SimpleFunction('assets',function($name){
+            $this->live->addFunction(new \Twig_SimpleFunction('assets',function($name,$b=true){
                 $src=__WEB_PATH__.$name;
-                if(DEBUG){
+                if(DEBUG && $b){
                     $src.='?v='.$_SERVER['REQUEST_TIME'];
                 }
                 return $src;
