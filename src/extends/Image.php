@@ -55,4 +55,44 @@ class Image
 
     }
 
+    // 缩放图片
+    public function size($src,$savepath,$width,$height=0)
+    {
+        if(is_file($savepath)){
+            return $savepath;
+        }
+        //获取图片信息
+        $info = getimagesize($src);
+        if($height==0){
+            $rate=$width/$info[0];
+
+            $height=floor($info[1]*$rate);
+        }
+
+        if($info[0]<=$width){
+            copy($src,$savepath);
+            return $savepath;
+        }
+        //获取图片扩展名
+        $type = image_type_to_extension($info[2],false);
+        // 打开源图片
+        $fun = 'imagecreatefrom'.$type;
+        $yum = $fun($src);
+        // 创建新图片
+        $image=imagecreatetruecolor($width,$height);
+
+
+        imagecopyresampled ($image,$yum ,0,0,0,0 ,$width ,$height,$info[0] ,$info[1]);
+
+        //指定输入类型
+        header('Content-type:'.$info['mime']);
+        //动态的输出图片到浏览器中
+        $func = 'image'.$type;
+        $func($image,$savepath);
+        //销毁图片
+        imagedestroy($image);
+
+
+    }
+
 }

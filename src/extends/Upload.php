@@ -85,50 +85,107 @@ class Upload
 		$this->rule[$type]=$content;
 	}
 
+	private function toArr($array)
+    {
+        $tmp=[];
+        $i=0;
+        while (count($array['name'])){
+            if($array['name'][$i]!=''){
+                $tmp[]=[
+                    'name'=>$array['name'][$i],
+                    'type'=>$array['type'][$i],
+                    'tmp_name'=>$array['tmp_name'][$i],
+                    'error'=>$array['error'][$i],
+                    'size'=>$array['size'][$i]
+                ];
+            }
+            unset($array['name'][$i]);
+            $i++;
+        }
+        return $tmp;
+    }
+
 	public function isPass($file)
 	{
-		if(empty($_FILES[$file])){
-			$this->error="上传对象[{$file}]为空";
-			return false;
-		}
-		$this->file=$_FILES[$file];
-		if($this->file['error']){
-			$this->error=$this->error_msg[$this->file['error']];
-			return false;
-		}
-		if(!is_uploaded_file($this->file['tmp_name'])){
-			$this->error='无文件上传';
-			return false;
-		}
-		$ext=$this->fileExt($this->file['name']);
-		// 检测文件类型
-		if(isset($this->rule['type'])){
-			if(!in_array($ext,$this->rule['type'])){
-				$this->error='此类型不允许上传';
-				return false;
-			}
-			if(!in_array($this->file['type'],$this->mime[$ext])){
-				$this->error='非法文件类型';
-				return false;
-			}
-		}
-		// 检测文件大小
-		if(isset($this->rule['max'])){
-			if($this->file['size']>$this->rule['max']){
-				$this->error='文件大小超过限制';
-				return false;
-			}
-		}
-		if(!is_dir($this->savepath)){
-			mkdir($this->savepath,0755,true);
-		}
-		$name=strtoupper(md5(uniqid(mt_rand(0,99999))));
-
-		$this->return=['path'=>$this->savepath,'name'=>$name,'ext'=>$ext,'yum'=>$this->file['name'],'mime'=>$this->file['type']];
-
-		move_uploaded_file($this->file['tmp_name'],$this->savepath.$name.'.'.$ext);
-		return true;
+	    $this->return=[];
+	    if(is_array($_FILES[$file]['error'])){
+	        $array=$this->toArr($_FILES[$file]);
+            $this->return['num']=0;
+	        foreach ($array as $i=>$item){
+	            $this->file=$item;
+                $r=$this->isVile();
+                if($r!==false){
+                    $this->return['num']++;
+                    $this->return['list'][]=$r;
+                }else{
+                    // 删除已上传
+                    if(!empty($this->return['list'])){
+                        foreach ($this->return['list'] as $item){
+                            unlink($item['path'].$item['name'].'.'.$item['ext']);
+                        }
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }else{
+	        $this->file=$_FILES[$file];
+            if(empty($this->file)){
+                $this->error="上传对象[{$file}]为空";
+                return false;
+            }
+            $r=$this->isVile();
+            if($r===false){
+                return false;
+            }else{
+                $this->return=$r;
+                return true;
+            }
+        }
 	}
+
+	private function isVile()
+    {
+        if($this->file['name']==''){
+            $this->error='无文件上传';
+            return false;
+        }
+        if($this->file['error']){
+            $this->error=$this->error_msg[$this->file['error']];
+            return false;
+        }
+        if(!is_uploaded_file($this->file['tmp_name'])){
+            $this->error='无文件上传';
+            return false;
+        }
+        $ext=$this->fileExt($this->file['name']);
+        // 检测文件类型
+        if(isset($this->rule['type'])){
+            if(!in_array($ext,$this->rule['type'])){
+                $this->error='此类型不允许上传';
+                return false;
+            }
+            if(!in_array($this->file['type'],$this->mime[$ext])){
+                $this->error='非法文件类型';
+                return false;
+            }
+        }
+        // 检测文件大小
+        if(isset($this->rule['max'])){
+            if($this->file['size']>$this->rule['max']){
+                $this->error='文件大小超过限制';
+                return false;
+            }
+        }
+        if(!is_dir($this->savepath)){
+            mkdir($this->savepath,0755,true);
+        }
+        $name=strtoupper(md5(uniqid(mt_rand(0,99999))));
+
+
+        move_uploaded_file($this->file['tmp_name'],$this->savepath.$name.'.'.$ext);
+        return ['path'=>$this->savepath,'name'=>$name,'ext'=>$ext,'yum'=>$this->file['name'],'mime'=>$this->file['type']];
+    }
 
 	/**
 	 * 取回保存文件
