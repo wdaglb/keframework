@@ -62,7 +62,8 @@ class ErrorException extends Exception
             }
             View::json(403,$error['message']);
         }*/
-        header('status: 505 Program Error');
+        header('HTTP/1.1 500 Program Error');
+
         require CORE_PATH.'tpl/error.php';
         die();
     }
