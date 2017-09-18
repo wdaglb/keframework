@@ -146,6 +146,7 @@ class Upload
 
 	private function isVile()
     {
+    	$this->file['name']=strtolower($this->file['name']);
         if($this->file['name']==''){
             $this->error='无文件上传';
             return false;

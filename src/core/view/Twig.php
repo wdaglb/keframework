@@ -86,7 +86,7 @@ class Twig implements \interfaces\Template
      */
     public function isTemplateFile($name)
     {
-        return is_file($this->path.$name);
+        return is_file($this->path.$name.$this->config['suffix']);
     }
     /**
      * 页面渲染

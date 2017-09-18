@@ -20,7 +20,7 @@ class Where
 				$tmp.=' AND ('.$this->parse($value).')';
 			}else{
 				$col='';
-				if(preg_match('/(\[(?P<cond>and|or)\])*(?P<column>[a-zA-Z0-9]+)(\[(?P<eq>.+?)\])*/',$key,$match)){
+				if(preg_match('/(\[(?P<cond>and|or)\])*(?P<column>[a-zA-Z0-9_]+)(\[(?P<eq>.+?)\])*/',$key,$match)){
 					$eq=isset($match['eq']) ? $match['eq'] : '=';
 					$cond=isset($match['cond']) && $match['cond']!='' ? strtoupper($match['cond']) : 'AND';
 					if($tmp!=''){

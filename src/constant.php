@@ -3,7 +3,7 @@
  * 环境常量配置
  */
 
-define('VERSION','1.37');
+define('VERSION','1.38');
 
 if(!defined('ROOT')){
     exit('ROOT is empty');

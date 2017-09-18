@@ -30,16 +30,16 @@ class Cache
 		$this->class=new $namespace($this->config);
 	}
 
-	public function get($key,$value='')
+	public function get($key,$value='',$timeout=null)
 	{
 		if(!strpos('.',$key)===false){
 			$key=explode('.',$key);
 		}
-		return $this->class->get($key,$value);
+		return $this->class->get($key,$value,$timeout);
 	}
 
-	public function set($key,$value='')
+	public function set($key,$value='',$timeout=null)
 	{
-		return $this->class->set($key,$value);
+		return $this->class->set($key,$value,$timeout);
 	}
 }

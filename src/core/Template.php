@@ -33,6 +33,7 @@ class Template
         $type='ke\\view\\'.ucwords($c['type']);
         $this->instance=new $type($c);
         $this->instance->setPath(APP_PATH.(isset($this->require['module']) ? $this->require['module'].'/' : '').'view/');
+
     }
 
     /**

@@ -19,5 +19,5 @@ interface Cache
     /**
      * 设置缓存
      */
-    public function set($key,$value='');
+    public function set($key,$value='',$timeout=null);
 }

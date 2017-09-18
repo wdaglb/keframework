@@ -31,6 +31,23 @@ if(!function_exists('config')){
 
     }
 }
+
+/**
+ * 缓存助手
+ * @return cache        返回缓存对象
+ */
+if(!function_exists('cache')){
+    function cache()
+    {
+        $new=storage('object_cache');
+        if($new==''){
+            $class='\\ke\\Cache';
+            $new=new $class();
+            storage('object_cache',$new);
+        }
+        return $new;
+    }
+}
 /**
  * 命名空间助手
  * @param  string $name 类名称

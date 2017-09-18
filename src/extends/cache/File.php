@@ -12,10 +12,14 @@ class File implements \interfaces\Cache
 		if(!is_dir($this->dir)) mkdir($this->dir,0755);
 	}
 
-	public function set($key,$value='')
+	public function set($key,$value='',$timeout=null)
 	{
+		if(is_null($timeout)){
+			$timeout=$this->config['timerout'];
+		}
+		$value = serialize($value);
 		$file=$key.'.php';
-		file_put_contents($this->dir.$file,serialize(['create_time'=>$_SERVER['REQUEST_TIME'],'data'=>$value]));
+		file_put_contents($this->dir.$file,serialize(['expire_time'=>$_SERVER['REQUEST_TIME']+$timeout,'data'=>$value]));
 	}
 
 	public function get($key,$value='')
@@ -25,11 +29,12 @@ class File implements \interfaces\Cache
 			$content=file_get_contents($this->dir.$file);
 			$data=unserialize($content);
 			// 过期删除
-			if($_SERVER['REQUEST_TIME']-$data['create_time']>$this->config['timerout']){
+			if($_SERVER['REQUEST_TIME']>$data['expire_time']){
 				unlink($this->dir.$file);
+
 				return $value;
 			}
-			return $data['data'];
+			return unserialize($data['data']);
 		}else{
 			return $value;
 		}

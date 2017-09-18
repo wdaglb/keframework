@@ -4,7 +4,7 @@
 namespace ke;
 
 
-use function Sodium\version_string;
+//use function Sodium\version_string;
 
 class Controller
 {
@@ -118,7 +118,7 @@ class Controller
     protected function redirect($url,$param=[])
     {
         if(Request::isAjax()){
-            return View::json(1,'跳转',['url'=>url($url,$param)]);
+            return $this->json(1,'跳转',['url'=>url($url,$param)]);
         }
         if(substr($url,0,3)==='ef:'){
             $url=substr($url,3);
